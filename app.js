@@ -1,7 +1,7 @@
 import Vue from 'vue'
-import { Hull } from './src/Delaunay'
+import { DT } from './src/Delaunay'
 
-const d = Hull()
+const d = DT()
 
 new Vue({
     el: '#APP',

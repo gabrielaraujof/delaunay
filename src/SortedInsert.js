@@ -18,11 +18,6 @@ function findInsertPos(needle, haystack, cmp) {
     }
 }
 
-export default function SortedList(sortFn) {
-
-    function Insert(item, items) {
-        items.splice(findInsertPos(item, items, sortFn), 0, item)
-    }
-
-    return { Insert }
+export default function SortedInsert(item, sorted, sortFn) {
+    sorted.splice(findInsertPos(item, sorted, sortFn), 0, item)
 }

@@ -1,22 +1,22 @@
 import { expect } from 'chai'
 
-import { Hull, LowerCommonTangent, RightOf } from '../src/Delaunay'
+import { DT, LowerCommonTangent, RightOf } from '../src/Delaunay'
 
 describe('Delaunay', () => {
     it('can create a convex hull for 1pt', () => {
-        const hull = Hull()
+        const dt = DT()
 
-        hull.Insert([1, 1])
-        expect(hull.model.edges).eqls([])
+        dt.Insert([1, 1])
+        expect(dt.model.edges).eqls([])
 
-        expect(hull.Leftmost()).eqls([1, 1])
-        expect(hull.Rightmost()).eqls([1, 1])
+        expect(dt.Leftmost()).eqls([1, 1])
+        expect(dt.Rightmost()).eqls([1, 1])
 
-        expect(hull.First([1, 1])).eqls([1, 1])
+        expect(dt.First([1, 1])).eqls([1, 1])
     })
 
     it('can create a convex hull for 2pts', () => {
-        const hull = Hull()
+        const hull = DT()
 
         hull.Insert([1, 1])
         hull.Insert([2, 2])
@@ -40,7 +40,7 @@ describe('Delaunay', () => {
     })
 
     it('can create a convex hull for 3pts', () => {
-        const hull = Hull()
+        const hull = DT()
 
         hull.Insert([1, 1])
         hull.Insert([2, 2])
@@ -81,12 +81,12 @@ describe('Delaunay', () => {
     })
 
     it('can return lower common tangent for two hulls', () => {
-        const V_L = Hull()
+        const V_L = DT()
         V_L.Insert([1, 2])
         V_L.Insert([2, 1])
         V_L.Insert([3, 3])
 
-        const V_R = Hull()
+        const V_R = DT()
         V_R.Insert([5, 5])
         V_R.Insert([6, 1])
         V_R.Insert([7, 3])
@@ -127,7 +127,7 @@ describe('Delaunay', () => {
     })
 
     it.skip('can create a convex hull for 4pts', () => {
-        const hull = Hull()
+        const hull = DT()
 
         hull.Insert([1, 1])
         hull.Insert([2, 2])
