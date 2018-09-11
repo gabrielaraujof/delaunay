@@ -1,59 +1,79 @@
 import SortedInsert from './SortedInsert'
+import LinkedCycle from './LinkedCycle'
 
-export function RightOf(z, line) {
-    const [x, y] = line
-    const a = z[0] - x[0]
+export function RightOf(pt, vector) {
+    const [x, y] = vector
+    const a = pt[0] - x[0]
     const b = y[0] - x[0]
-    const c = z[1] - x[1]
+    const c = pt[1] - x[1]
     const d = y[1] - x[1]
-    return 0 < (a * d) - (b * c)
+    return 0 > (a * d) - (b * c)
 }
 
-export function LowerCommonTangent(V_L, V_R) {
-    let X = V_L.Rightmost()
-    let Y = V_R.Leftmost()
-    let Z0 = V_R.First(Y)
-    let Z1 = V_L.First(X)
-    let Z2 = V_L.Pred(X, Z1)
+export function LowerCommonTangent(L, R) {
+    let X = L.Rightmost()
+    let Y = R.Leftmost()
+
+    let $Y = R.First(Y)
+    let X$ = L.CW(X, L.First(X))
 
     while (true) {
-        if (RightOf(Z0, [X, Y])) {
-            let tmp = V_R.Succ(Z0, Y)
-            Y = Z0
-            Z0 = tmp
-        } else if (RightOf(Z2, [X, Y])) {
-            let tmp = V_L.Pred(Z2, X)
-            X = Z2
-            Z2 = tmp
+        if (RightOf($Y, [X, Y])) {
+            let $$Y = R.First($Y)
+            Y = $Y
+            $Y = $$Y
+        } else if (RightOf(X$, [X, Y])) {
+            let X$$ = L.CW(X$, X)
+            X = X$
+            X$ = X$$
         } else {
             return [X, Y]
         }
     }
 }
 
-function ptSort(pt, cmp) {
-    if (pt[0] === cmp[0]) return pt[1] < cmp[1] ? -1 : 1
-    return pt[0] < cmp[0] ? -1 : 1
+function ptSort(A, B) {
+    // sort left-to-right and top-to-bottom
+    if (A[0] === B[0]) {
+        return A[1] > B[1] ? -1 : 1
+    }
+
+    return A[0] < B[0] ? -1 : 1
 }
 
-export function MergeTriangulations(left, right) {
-    const adj = {}
-    Object.keys(left.model.adj).forEach(k => adj[k] = left.model.adj[k])
-    Object.keys(right.model.adj).forEach(k => adj[k] = right.model.adj[k])
+export function MergeTriangulations(l, r) {
+    const adj = {
+        ...l.model.adj,
+        ...r.model.adj,
+    }
 
-    const lct = LowerCommonTangent(left, right)
-    return newDT(
-        left.model.pts.concat(right.model.pts),
-        adj,
-        left.model.edges.concat(right.model.edges).concat([lct])
-    )
+    const [X, Y] = LowerCommonTangent(l, r)
+    adj[X].Prepend(Y)
+    adj[Y].Append(X)
+
+    const pts = [
+        ...l.model.pts,
+        ...r.model.pts,
+    ]
+
+    const edges = [
+        ...l.model.edges,
+        ...r.model.edges,
+        [X, Y],
+    ]
+
+    return newDT(pts, adj, edges)
 }
 
 function newDT(pts, adj, edges) {
     const model = { pts, adj, edges }
 
-    function Insert(pt) {
-        SortedInsert(pt, model.pts, ptSort)
+    function Insert() {
+        const args = Array.from(arguments)
+        if (args.length === 0) throw Error()
+
+        args.forEach(pt => SortedInsert(pt, model.pts, ptSort))
+
         const dt = Triangulate(model.pts)
         model.adj = dt.model.adj
         model.edges = dt.model.edges
@@ -68,42 +88,25 @@ function newDT(pts, adj, edges) {
     }
 
     function First(pt) {
-        return typeof model.adj[pt] === 'undefined' ? pt : model.adj[pt].pt
+        const node = typeof model.adj[pt] === 'undefined' ? null : model.adj[pt].First()
+        return node === null ? null : node.item
     }
 
     function Pred(ptA, ptB) {
-        const node = find(model, ptA, ptB)
-        return node === null ? null : node.cw.pt
+        const node = typeof model.adj[ptA] === 'undefined' ? null : model.adj[ptA].Get(ptB)
+        return node === null ? null : node.prev.item
     }
 
     function Succ(ptA, ptB) {
-        const node = find(model, ptA, ptB)
-        return node === null ? null : node.ccw.pt
+        const node = typeof model.adj[ptA] === 'undefined' ? null : model.adj[ptA].Get(ptB)
+        return node === null ? null : node.next.item
     }
 
-    return { model, Insert, Leftmost, Rightmost, First, Pred, Succ }
+    return { model, Insert, Leftmost, Rightmost, First, CW: Pred, CCW: Succ }
 }
 
 export function DT() {
     return newDT([], {}, [])
-}
-
-function find(model, ptA, ptB) {
-    let node = model.adj[ptA]
-    if (typeof node === 'undefined') {
-        return null
-    }
-
-    const first = [node.pt[0], node.pt[1]]
-
-    while (node.pt[0] !== ptB[0] && node.pt[1] !== ptB[1]) {
-        node = node.cw
-        if (first[0] === ptA[0] && first[1] === ptA[1]) {
-            return null
-        }
-    }
-
-    return node
 }
 
 function Triangulate(pts) {
@@ -112,89 +115,61 @@ function Triangulate(pts) {
     }
 
     if (pts.length === 2) {
-        const adj = {}
+        const [A, B] = pts
 
-        const nodeA = { pt: pts[0] }
-        nodeA.cw = nodeA
-        nodeA.ccw = nodeA
+        const cycleA = LinkedCycle()
+        cycleA.Append(B)
 
-        const nodeB = { pt: pts[1] }
-        nodeB.cw = nodeB
-        nodeB.ccw = nodeB
+        const cycleB = LinkedCycle()
+        cycleB.Append(A)
 
-        adj[nodeA.pt] = nodeB
-        adj[nodeB.pt] = nodeA
-
-        return newDT(pts, adj, [
-            [nodeA.pt, nodeB.pt],
-        ])
-    }
-
-    if (pts.length === 3) {
-        const adj = {}
-
-        const A = pts[0]
-        const B = pts[1]
-        const C = pts[2]
-
-        if (B[1] > A[1]) {
-            //   B
-            // A   C
-            const A_1 = { pt: C }
-            const A_2 = { pt: B }
-            adj[A] = A_1
-            A_1.cw = A_2
-            A_1.ccw = A_2
-            A_2.cw = A_1
-            A_2.ccw = A_1
-
-            const B_1 = { pt: A }
-            const B_2 = { pt: C }
-            adj[B] = B_1
-            B_1.cw = B_2
-            B_1.ccw = B_2
-            B_2.cw = B_1
-            B_2.ccw = B_1
-
-            const C_1 = { pt: B }
-            const C_2 = { pt: A }
-            adj[C] = C_1
-            C_1.cw = C_2
-            C_1.ccw = C_2
-            C_2.cw = C_1
-            C_2.ccw = C_1
-        } else {
-            // A   C
-            //   B
-            const A_1 = { pt: B }
-            const A_2 = { pt: C }
-            adj[A] = A_1
-            A_1.cw = A_2
-            A_1.ccw = A_2
-            A_2.cw = A_1
-            A_2.ccw = A_1
-
-            const B_1 = { pt: C }
-            const B_2 = { pt: A }
-            adj[B] = B_1
-            B_1.cw = B_2
-            B_1.ccw = B_2
-            B_2.cw = B_1
-            B_2.ccw = B_1
-
-            const C_1 = { pt: A }
-            const C_2 = { pt: B }
-            adj[C] = C_1
-            C_1.cw = C_2
-            C_1.ccw = C_2
-            C_2.cw = C_1
-            C_2.ccw = C_1
+        const adj = {
+            [A]: cycleA,
+            [B]: cycleB,
         }
 
         return newDT(pts, adj, [
             [A, B],
+        ])
+    }
+
+    if (pts.length === 3) {
+        const [A, B, C] = pts
+
+        const cycleA = LinkedCycle()
+        const cycleB = LinkedCycle()
+        const cycleC = LinkedCycle()
+
+        if (RightOf(C, [A, B])) {
+            cycleA.Append(C)
+            cycleA.Append(B)
+
+            cycleB.Append(A)
+            cycleB.Append(C)
+
+            cycleC.Append(B)
+            cycleC.Append(A)
+        } else {
+            cycleA.Append(B)
+            cycleA.Append(C)
+
+            cycleB.Append(C)
+            cycleB.Append(A)
+
+            cycleC.Append(A)
+            cycleC.Append(B)
+        }
+
+        const adj = {
+            [A]: cycleA,
+            [B]: cycleB,
+            [C]: cycleC,
+        }
+
+        return newDT(pts, adj, [
+            [A, B],
+            [A, C],
             [B, C],
-            [C, A],
         ])
     }
 
