@@ -13,7 +13,7 @@ function LinkedCycle() {
         return model.first ? model.first : null
     }
 
-    function Append(item) {
+    function Append(item, offset = 0) {
         if (model.first === null) {
             const node = { item }
             node.prev = node
@@ -22,24 +22,32 @@ function LinkedCycle() {
 
             model.items[item] = node
         } else {
-            const first = model.first
-            const last = model.first.prev
+            offset = ((offset%model.length)+model.length)%model.length
 
+            let after = model.first
+            let before = model.first.prev
+
+            for (let i = 0; i < offset; i++) {
+                after = after.prev
+                before = before.prev
+            }
             const X = { item }
-            X.next = first
-            X.prev = last
+            X.next = after
+            X.prev = before
 
-            last.next = X
-            first.prev = X
+            before.next = X
+            after.prev = X
             model.items[item] = X
         }
 
         model.length += 1
     }
 
-    function Prepend(item) {
-        Append(item)
-        model.first = model.first.prev
+    function Prepend(item, offset = 0) {
+        Append(item, -offset)
+        if (offset === 0) {
+            model.first = model.first.prev
+        }
     }
 
     function Get(item) {

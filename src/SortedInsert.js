@@ -13,11 +13,12 @@ function findInsertPos(needle, haystack, cmp) {
             if (right - left <= 1) return pivot + 1
             left = pivot
         } else {
-            return pivot + 1
+            return -1
         }
     }
 }
 
 export default function SortedInsert(item, sorted, sortFn) {
-    sorted.splice(findInsertPos(item, sorted, sortFn), 0, item)
+    const pos = findInsertPos(item, sorted, sortFn)
+    if (pos !== -1) sorted.splice(pos, 0, item)
 }

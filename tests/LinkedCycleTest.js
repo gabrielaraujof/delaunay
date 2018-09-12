@@ -53,6 +53,31 @@ describe('LinkedCycle', () => {
         expect(C.next).eqls(A)
     })
 
+    it('can append items to the end with an offset', () => {
+        const list = LinkedCycle()
+
+        // ↪ A -> B ->
+        list.Append("A", 0)
+        list.Append("B", 0)
+
+        // ↪ A -> C -> B ->
+        list.Append("C", 1)
+        expect(list.Length()).equals(3)
+
+        const A = list.First()
+        const B = A.prev
+        const C = A.next
+        expect(A.item).equals("A")
+        expect(C.item).equals("C")
+        expect(B.item).equals("B")
+
+        expect(B.prev).eqls(C)
+        expect(B.next).eqls(A)
+
+        expect(A.prev).eqls(B)
+        expect(A.next).eqls(C)
+    })
+
     it('can prepend items to the start', () => {
         const list = LinkedCycle()
 
@@ -116,6 +141,39 @@ describe('LinkedCycle', () => {
         expect(D.item).equals("D")
         expect(D.prev).eqls(A)
         expect(D.next).eqls(C)
+    })
+
+    it('can prepend items to the start with an offset', () => {
+        const list = LinkedCycle()
+
+        // ↪ C -> B ->
+        list.Append("C", 0)
+        list.Append("B", 0)
+
+        // ↪ D -> E -> C -> B ->
+        list.Prepend("D", 0)
+        list.Prepend("E", 1)
+
+        const D = list.First()
+        const E = D.next
+        const C = E.next
+        const B = C.next
+        expect(D.item).equals("D")
+        expect(E.item).equals("E")
+        expect(C.item).equals("C")
+        expect(B.item).equals("B")
+
+        expect(D.prev).eqls(B)
+        expect(D.next).eqls(E)
+
+        expect(E.prev).eqls(D)
+        expect(E.next).eqls(C)
+
+        expect(C.prev).eqls(E)
+        expect(C.next).eqls(B)
+
+        expect(B.prev).eqls(C)
+        expect(B.next).eqls(D)
     })
 
     it('supports lookup', () => {

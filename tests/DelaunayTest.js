@@ -1,6 +1,6 @@
 import { expect } from 'chai'
 
-import { DT, LowerCommonTangent, MergeTriangulations, RightOf } from '../src/Delaunay'
+import { DT, LowerCommonTangent, Insert, MergeTriangulations, RightOf, UpperCommonTangent } from '../src/Delaunay'
 
 describe('RightOf', () => {
     it('returns true if pt is strictly "below" a line on canvas', () => {
@@ -33,7 +33,7 @@ describe('Delaunay', () => {
         it('can create a dt for 1pt', () => {
             const dt = DT()
 
-            dt.Insert([1, 1])
+            dt.InsertPt([1, 1])
             expect(dt.model.edges).eqls([])
 
             expect(dt.Leftmost()).eqls([1, 1])
@@ -43,8 +43,8 @@ describe('Delaunay', () => {
         it('can create a dt for 2pts', () => {
             const dt = DT()
 
-            dt.Insert([1, 1])
-            dt.Insert([2, 2])
+            dt.InsertPt([1, 1])
+            dt.InsertPt([2, 2])
             expect(dt.model.edges).eqls([
                 [[1, 1], [2, 2]],
             ])
@@ -70,9 +70,9 @@ describe('Delaunay', () => {
             const C = [3, 1]
 
             const dt = DT()
-            dt.Insert(A)
-            dt.Insert(B)
-            dt.Insert(C)
+            dt.InsertPt(A)
+            dt.InsertPt(B)
+            dt.InsertPt(C)
 
             expect(dt.model.edges).eqls([[A, B], [A, C], [B, C]])
             expect(dt.Leftmost()).eqls(A)
@@ -106,9 +106,9 @@ describe('Delaunay', () => {
             const C = [3, 2]
 
             const dt = DT()
-            dt.Insert(A)
-            dt.Insert(B)
-            dt.Insert(C)
+            dt.InsertPt(A)
+            dt.InsertPt(B)
+            dt.InsertPt(C)
 
             expect(dt.model.edges).eqls([[A, B], [A, C], [B, C]])
             expect(dt.Leftmost()).eqls(A)
@@ -142,9 +142,9 @@ describe('Delaunay', () => {
             const C = [3, 2]
 
             const dt = DT()
-            dt.Insert(A)
-            dt.Insert(B)
-            dt.Insert(C)
+            dt.InsertPt(A)
+            dt.InsertPt(B)
+            dt.InsertPt(C)
 
             expect(dt.model.edges).eqls([[A, B], [A, C], [B, C]])
             expect(dt.Leftmost()).eqls(A)
@@ -170,7 +170,7 @@ describe('Delaunay', () => {
         })
     })
 
-    describe('LowerCommonTangent', () => {
+    describe('CommonTangents', () => {
         describe('2pts | 2pts', () => {
             it('case 1', () => {
                 // A _ | _ D
@@ -181,12 +181,13 @@ describe('Delaunay', () => {
                 const D = [4, 1]
 
                 const L = DT()
-                L.Insert(A, B)
+                L.InsertPt(A, B)
 
                 const R = DT()
-                R.Insert(C, D)
+                R.InsertPt(C, D)
 
                 expect(LowerCommonTangent(L, R)).eqls([B, C])
+                expect(UpperCommonTangent(L, R)).eqls([A, D])
             })
 
             it('case 2', () => {
@@ -198,12 +199,13 @@ describe('Delaunay', () => {
                 const D = [4, 2]
 
                 const L = DT()
-                L.Insert(A, B)
+                L.InsertPt(A, B)
 
                 const R = DT()
-                R.Insert(C, D)
+                R.InsertPt(C, D)
 
                 expect(LowerCommonTangent(L, R)).eqls([B, D])
+                expect(UpperCommonTangent(L, R)).eqls([A, C])
             })
 
             it('case 3', () => {
@@ -215,12 +217,13 @@ describe('Delaunay', () => {
                 const D = [4, 2]
 
                 const L = DT()
-                L.Insert(A, B)
+                L.InsertPt(A, B)
 
                 const R = DT()
-                R.Insert(C, D)
+                R.InsertPt(C, D)
 
                 expect(LowerCommonTangent(L, R)).eqls([A, D])
+                expect(UpperCommonTangent(L, R)).eqls([B, C])
             })
 
             it('case 4', () => {
@@ -232,12 +235,13 @@ describe('Delaunay', () => {
                 const D = [4, 1]
 
                 const L = DT()
-                L.Insert(A, B)
+                L.InsertPt(A, B)
 
                 const R = DT()
-                R.Insert(C, D)
+                R.InsertPt(C, D)
 
                 expect(LowerCommonTangent(L, R)).eqls([A, C])
+                expect(UpperCommonTangent(L, R)).eqls([B, D])
             })
 
             it('case 5', () => {
@@ -251,12 +255,13 @@ describe('Delaunay', () => {
                 const D = [6, 1]
 
                 const L = DT()
-                L.Insert(A, B)
+                L.InsertPt(A, B)
 
                 const R = DT()
-                R.Insert(C, D)
+                R.InsertPt(C, D)
 
                 expect(LowerCommonTangent(L, R)).eqls([A, D])
+                expect(UpperCommonTangent(L, R)).eqls([B, D])
             })
 
             it('case 6', () => {
@@ -270,12 +275,13 @@ describe('Delaunay', () => {
                 const D = [4, 1]
 
                 const L = DT()
-                L.Insert(A, B)
+                L.InsertPt(A, B)
 
                 const R = DT()
-                R.Insert(C, D)
+                R.InsertPt(C, D)
 
                 expect(LowerCommonTangent(L, R)).eqls([A, C])
+                expect(UpperCommonTangent(L, R)).eqls([B, D])
             })
 
             it('case 7', () => {
@@ -289,16 +295,17 @@ describe('Delaunay', () => {
                 const D = [4, 1]
 
                 const L = DT()
-                L.Insert(A, B)
+                L.InsertPt(A, B)
 
                 const R = DT()
-                R.Insert(C, D)
+                R.InsertPt(C, D)
 
                 expect(LowerCommonTangent(L, R)).eqls([B, C])
+                expect(UpperCommonTangent(L, R)).eqls([B, C])
             })
         })
 
-        describe.only('3pts | 3pts', () => {
+        describe('3pts | 3pts', () => {
             it('case 1', () => {
                 // A _ _ | _ _ F
                 // _ _ C | D _ _
@@ -311,12 +318,13 @@ describe('Delaunay', () => {
                 const F = [6, 1]
 
                 const L = DT()
-                L.Insert(A, B, C)
+                L.InsertPt(A, B, C)
 
                 const R = DT()
-                R.Insert(D, E, F)
+                R.InsertPt(D, E, F)
 
                 expect(LowerCommonTangent(L, R)).eqls([B, E])
+                expect(UpperCommonTangent(L, R)).eqls([A, F])
             })
 
             it('case 2', () => {
@@ -331,12 +339,13 @@ describe('Delaunay', () => {
                 const F = [6, 1]
 
                 const L = DT()
-                L.Insert(A, B, C)
+                L.InsertPt(A, B, C)
 
                 const R = DT()
-                R.Insert(D, E, F)
+                R.InsertPt(D, E, F)
 
                 expect(LowerCommonTangent(L, R)).eqls([C, E])
+                expect(UpperCommonTangent(L, R)).eqls([A, F])
             })
 
             it('case 3', () => {
@@ -352,12 +361,68 @@ describe('Delaunay', () => {
                 const F = [6, 1]
 
                 const L = DT()
-                L.Insert(A, B, C)
+                L.InsertPt(A, B, C)
 
                 const R = DT()
-                R.Insert(D, E, F)
+                R.InsertPt(D, E, F)
 
                 expect(LowerCommonTangent(L, R)).eqls([C, F])
+                expect(UpperCommonTangent(L, R)).eqls([A, D])
+            })
+        })
+    })
+
+    describe.only('Insert', () => {
+
+        describe('2pts:2pts', () => {
+            it('case 1', () => {
+                // A _ | _ D
+                // _ B | C _
+            })
+        })
+
+        describe('3pts:3pts', () => {
+            it('case 1', () => {
+                // A _ _ | _ _ F
+                // _ _ C | D _ _
+                // _ B _ | _ E _
+                const A = [1, 1]
+                const B = [2, 3]
+                const C = [3, 2]
+                const D = [4, 2]
+                const E = [5, 3]
+                const F = [6, 1]
+
+                const dtL = DT()
+                dtL.InsertPt(A, B, C)
+
+                const dtR = DT()
+                dtR.InsertPt(D, E, F)
+
+                const LT = LowerCommonTangent(dtL, dtR)
+                const UT = UpperCommonTangent(dtL, dtR)
+
+                const dt = MergeTriangulations(dtL, dtR)
+
+                Insert(dt, LT)
+                expect(dt.First(B)).eqls(E)
+                expect(dt.CCW(B, E)).eqls(C)
+                expect(dt.CW(B, C)).eqls(E)
+
+                expect(dt.First(E)).eqls(F)
+                expect(dt.CW(E, F)).eqls(B)
+                expect(dt.CCW(E, F)).eqls(D)
+                expect(dt.CW(E, B)).eqls(D)
+                expect(dt.CCW(E, B)).eqls(F)
+
+                Insert(dt, UT)
+                expect(dt.First(A)).eqls(B)
+                expect(dt.CW(A, B)).eqls(F)
+                expect(dt.CCW(A, F)).eqls(B)
+
+                expect(dt.First(F)).eqls(A)
+                expect(dt.CW(F, A)).eqls(E)
+                expect(dt.CCW(F, E)).eqls(A)
             })
         })
     })
