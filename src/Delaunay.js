@@ -1,147 +1,39 @@
 import SortedInsert from './SortedInsert'
-import LinkedCycle from './LinkedCycle'
+import VertexCycle from './VertexCycle'
+import { circumscribed, linesEq, rightOf } from './Geometry'
 
-function det(pt, vector) {
-    const [x, y] = vector
-    const a = pt[0] - x[0]
-    const b = y[0] - x[0]
-    const c = pt[1] - x[1]
-    const d = y[1] - x[1]
-    return (a * d) - (b * c)
+export function DT() {
+    return newDT([], {}, [])
 }
 
-export function RightOf(pt, vector) {
-    return 0 > det(pt, vector)
+function pushEdge(model, [X, Y]) {
+    const sortedEdge = ptSort(X, Y) === 1 ? [Y, X] : [X, Y]
+    model.edges.push(sortedEdge)
 }
 
-export function UpperCommonTangent(L, R) {
-    let X = L.Rightmost()
-    let Y = R.Leftmost()
-
-    let $X = L.First(X)
-    let Y$ = R.CW(Y, R.First(Y))
-
-    while (true) {
-        if (RightOf(Y$, [Y, X])) {
-            let Y$$ = R.CW(Y$, Y)
-            Y = Y$
-            Y$ = Y$$
-        } else if (RightOf($X, [Y, X])) {
-            let $$X = L.First($X)
-            X = $X
-            $X = $$X
-        } else {
-            return [X, Y]
-        }
-    }
-}
-
-export function LowerCommonTangent(L, R) {
-    let X = L.Rightmost()
-    let Y = R.Leftmost()
-
-    let $Y = R.First(Y)
-    let X$ = L.CW(X, L.First(X))
-
-    while (true) {
-        if (RightOf($Y, [X, Y])) {
-            let $$Y = R.First($Y)
-            Y = $Y
-            $Y = $$Y
-        } else if (RightOf(X$, [X, Y])) {
-            let X$$ = L.CW(X$, X)
-            X = X$
-            X$ = X$$
-        } else {
-            return [X, Y]
-        }
-    }
-}
-
-function ptSort(A, B) {
-    // sort left-to-right and top-to-bottom
-    if (A[0] === B[0]) {
-        if (A[1] === B[1]) {
-            return 0
-        }
-        return A[1] > B[1] ? -1 : 1
-    }
-
-    return A[0] < B[0] ? -1 : 1
-}
-
-export function LinesEq(A, B) {
-    const [A_x, A_y] = A
-    const [B_x, B_y] = B
-
-    return A_x[0] === B_x[0] && A_x[1] === B_x[1]
-        && A_y[0] === B_y[0] && A_y[1] === B_y[1]
-}
-
-export function MergeTriangulations(L, R) {
-    const adj = {
-        ...L.model.adj,
-        ...R.model.adj,
-    }
-
-    const edges = [
-        ...L.model.edges,
-        ...R.model.edges,
-    ]
-
-    const pts = [
-        ...L.model.pts,
-        ...R.model.pts,
-    ]
-
-    // const tanLower = LowerCommonTangent(L, R)
-    // const tanUpper = UpperCommonTangent(L, R)
-
-    // adj[tanLower[0]].Prepend(tanLower[1])
-    // adj[tanLower[1]].Append(tanLower[0])
-    // edges.push(tanLower)
-
-    // if (!LinesEq(tanUpper, tanLower)) {
-    //     adj[tanUpper[0]].Append(tanUpper[1])
-    //     adj[tanUpper[1]].Prepend(tanUpper[0])
-    //     edges.push(tanUpper)
-    // }
-
-    return newDT(pts, adj, edges)
-}
-
-export function LeftInsert(cycle, [X, Y]) {
-    let next = cycle.First()
-    for (let i = 0; i < cycle.Length(); i++) {
-        if (RightOf(Y, [X, next.item])) {
-            return cycle.Prepend(Y, i)
-        }
-        next = next.next
-    }
-    return cycle.Append(Y)
-}
-
-function RightInsert(cycle, [X, Y]) {
-    let next = cycle.First().prev
-    for (let i = 0; i > -(cycle.Length()); i--) {
-        if (RightOf(X, [next.item, Y])) {
-            return cycle.Append(X, i)
-        }
-        next = next.next
-    }
-    return cycle.Prepend(X)
-}
-
-export function Insert(dt, edge) {
-    LeftInsert(dt.model.adj[edge[0]], edge)
-    RightInsert(dt.model.adj[edge[1]], edge)
-    dt.model.edges.push(edge)
+function popEdge(model, [X, Y]) {
+    const sortedEdge = ptSort(X, Y) === 1 ? [Y, X] : [X, Y]
+    model.edges = model.edges.filter(e => !linesEq(e, sortedEdge))
 }
 
 function newDT(pts, adj, edges) {
     const model = { pts, adj, edges }
 
-    function Insert() {
+    function InsertLine([X, Y]) {
+        model.adj[X].Insert(Y)
+        model.adj[Y].Insert(X)
+
+        pushEdge(model, [X,Y])
+    }
+
+    function RemoveLine([X, Y]) {
+        model.adj[X].Remove(Y)
+        model.adj[Y].Remove(X)
+
+        popEdge(model, [X,Y])
+    }
+
+    function InsertPt() {
         const args = Array.from(arguments)
         if (args.length === 0) throw Error()
 
@@ -161,25 +53,74 @@ function newDT(pts, adj, edges) {
     }
 
     function First(pt) {
-        const node = typeof model.adj[pt] === 'undefined' ? null : model.adj[pt].First()
-        return node === null ? null : node.item
+        const node = model.adj[pt]
+        return node ? node.First() : null
     }
 
     function Pred(ptA, ptB) {
-        const node = typeof model.adj[ptA] === 'undefined' ? null : model.adj[ptA].Get(ptB)
-        return node === null ? null : node.prev.item
+        const node = model.adj[ptA]
+        return node ? node.CW(ptB) : null
     }
 
     function Succ(ptA, ptB) {
-        const node = typeof model.adj[ptA] === 'undefined' ? null : model.adj[ptA].Get(ptB)
-        return node === null ? null : node.next.item
+        const node = model.adj[ptA]
+        return node ? node.CCW(ptB) : null
     }
 
-    return { model, InsertPt: Insert, Leftmost, Rightmost, First, CW: Pred, CCW: Succ }
+    return { model, InsertPt, InsertLine, RemoveLine, Leftmost, Rightmost, First, Pred, Succ }
 }
 
-export function DT() {
-    return newDT([], {}, [])
+export function UpperCommonTangent(L, R) {
+    let X = L.Rightmost()
+    let Y = R.Leftmost()
+
+    let $X = L.First(X)
+    let Y$ = R.Pred(Y, R.First(Y))
+
+    while (true) {
+        if (rightOf(Y$, [Y, X])) {
+            let Y$$ = R.Pred(Y$, Y)
+            Y = Y$
+            Y$ = Y$$
+        } else if (rightOf($X, [Y, X])) {
+            let $$X = L.First($X)
+            X = $X
+            $X = $$X
+        } else {
+            return [X, Y]
+        }
+    }
+}
+
+export function LowerCommonTangent(L, R) {
+    let X = L.Rightmost()
+    let Y = R.Leftmost()
+
+    let $Y = R.First(Y)
+    let X$ = L.Pred(X, L.First(X))
+
+    while (true) {
+        if (rightOf($Y, [X, Y])) {
+            let $$Y = R.First($Y)
+            Y = $Y
+            $Y = $$Y
+        } else if (rightOf(X$, [X, Y])) {
+            let X$$ = L.Pred(X$, X)
+            X = X$
+            X$ = X$$
+        } else {
+            return [X, Y]
+        }
+    }
+}
+
+function ptSort(A, B) {
+    if (A[0] === B[0]) {
+        if (A[1] === B[1]) return 0
+        return A[1] > B[1] ? -1 : 1
+    }
+
+    return A[0] < B[0] ? -1 : 1
 }
 
 function Triangulate(pts) {
@@ -190,11 +131,11 @@ function Triangulate(pts) {
     if (pts.length === 2) {
         const [A, B] = pts
 
-        const cycleA = LinkedCycle()
-        cycleA.Append(B)
+        const cycleA = VertexCycle(A)
+        cycleA.Insert(B)
 
-        const cycleB = LinkedCycle()
-        cycleB.Append(A)
+        const cycleB = VertexCycle(B)
+        cycleB.Insert(A)
 
         const adj = {
             [A]: cycleA,
@@ -209,28 +150,28 @@ function Triangulate(pts) {
     if (pts.length === 3) {
         const [A, B, C] = pts
 
-        const cycleA = LinkedCycle()
-        const cycleB = LinkedCycle()
-        const cycleC = LinkedCycle()
+        const cycleA = VertexCycle(A)
+        const cycleB = VertexCycle(B)
+        const cycleC = VertexCycle(C)
 
-        if (RightOf(C, [A, B])) {
-            cycleA.Append(C)
-            cycleA.Append(B)
+        if (rightOf(C, [A, B])) {
+            cycleA.Insert(C)
+            cycleA.Insert(B)
 
-            cycleB.Append(A)
-            cycleB.Append(C)
+            cycleB.Insert(A)
+            cycleB.Insert(C)
 
-            cycleC.Append(B)
-            cycleC.Append(A)
+            cycleC.Insert(B)
+            cycleC.Insert(A)
         } else {
-            cycleA.Append(B)
-            cycleA.Append(C)
+            cycleA.Insert(B)
+            cycleA.Insert(C)
 
-            cycleB.Append(C)
-            cycleB.Append(A)
+            cycleB.Insert(C)
+            cycleB.Insert(A)
 
-            cycleC.Append(A)
-            cycleC.Append(B)
+            cycleC.Insert(A)
+            cycleC.Insert(B)
         }
 
         const adj = {
@@ -250,15 +191,82 @@ function Triangulate(pts) {
     const left = Triangulate(pts.slice(0, mid))
     const right = Triangulate(pts.slice(mid, pts.length))
 
-    const LT = LowerCommonTangent(left, right)
-    const UT = UpperCommonTangent(left, right)
+    return Merge(left, right)
+}
 
-    const dt = MergeTriangulations(left, right)
+export function Merge(dtL, dtR) {
+    let BT = LowerCommonTangent(dtL, dtR)
+    let UT = UpperCommonTangent(dtL, dtR)
 
-    Insert(dt, LT)
-    Insert(dt, UT)
+    const dt = MergeTriangulations(dtL, dtR)
+
+    let first = true
+    while (!linesEq(BT, UT)) {
+        let L = BT[0]
+        let R = BT[1]
+        dt.InsertLine(BT)
+
+        if (first) {
+            dt.model.adj[BT[0]].SetFirst(BT[1])
+            first = false
+        }
+
+        let A = false
+        let B = false
+
+        let R1 = dt.Pred(R, L)
+        if (rightOf(R1, [R, L])) {
+            let R2 = dt.Pred(R, R1)
+            while (circumscribed(R1, L, R, R2)) {
+                let newR2 = dt.Pred(R, R1)
+                let newR1 = R2
+                dt.RemoveLine([R1, R])
+
+                R1 = newR1
+                R2 = newR2
+            }
+        } else {
+            A = true
+        }
+
+        let L1 = dt.Succ(L, R)
+        if (rightOf(L1, [R, L])) {
+            let L2 = dt.Succ(L, L1)
+            while (circumscribed(L, R, L1, L2)) {
+                let newL2 = dt.Succ(L, L2)
+                let newL1 = L2
+                dt.RemoveLine([L, L1])
+
+                L1 = newL1
+                L2 = newL2
+            }
+        } else {
+            B = true
+        }
+
+        if (A) {
+            L = L1
+        } else if (B) {
+            R = R1
+        } else if (circumscribed(L, R, R1, L1)) {
+            L = L1
+        } else {
+            R = R1
+        }
+
+        BT = [L, R]
+    }
+
+    dt.InsertLine(UT)
+    dt.model.adj[UT[1]].SetFirst(UT[0])
 
     return dt
 }
 
+export function MergeTriangulations(L, R) {
+    const adj = { ...L.model.adj, ...R.model.adj }
+    const edges = [...L.model.edges, ...R.model.edges]
+    const pts = [...L.model.pts, ...R.model.pts]
 
+    return newDT(pts, adj, edges)
+}

@@ -1,32 +1,12 @@
 import { expect } from 'chai'
 
-import { DT, LowerCommonTangent, Insert, MergeTriangulations, RightOf, UpperCommonTangent } from '../src/Delaunay'
-
-describe('RightOf', () => {
-    it('returns true if pt is strictly "below" a line on canvas', () => {
-        const x = [1, 1]
-        const y = [2, 2]
-
-        const pt = [2, 3]
-        expect(RightOf(pt, [x, y])).equals(true)
-    })
-
-    it('returns false if pt is collinear to line', () => {
-        const x = [1, 1]
-        const y = [2, 2]
-
-        const pt = [3, 3]
-        expect(RightOf(pt, [x, y])).equals(false)
-    })
-
-    it('returns false if pt is "above" line in canvas', () => {
-        const x = [1, 1]
-        const y = [2, 2]
-
-        const pt = [2, 1]
-        expect(RightOf(pt, [x, y])).equals(false)
-    })
-})
+import {
+    DT,
+    Merge,
+    MergeTriangulations,
+    LowerCommonTangent,
+    UpperCommonTangent,
+} from '../src/Delaunay'
 
 describe('Delaunay', () => {
     describe('Base Cases', () => {
@@ -55,10 +35,10 @@ describe('Delaunay', () => {
             expect(dt.First([1, 1])).eqls([2, 2])
             expect(dt.First([2, 2])).eqls([1, 1])
 
-            expect(dt.CW([2, 2], [1, 1])).eqls([1, 1])
-            expect(dt.CCW([2, 2], [1, 1])).eqls([1, 1])
-            expect(dt.CW([1, 1], [2, 2])).eqls([2, 2])
-            expect(dt.CCW([1, 1], [2, 2])).eqls([2, 2])
+            expect(dt.Pred([2, 2], [1, 1])).eqls([1, 1])
+            expect(dt.Succ([2, 2], [1, 1])).eqls([1, 1])
+            expect(dt.Pred([1, 1], [2, 2])).eqls([2, 2])
+            expect(dt.Succ([1, 1], [2, 2])).eqls([2, 2])
         })
 
         it('can create a dt for 3pts (case 1)', () => {
@@ -82,19 +62,19 @@ describe('Delaunay', () => {
             expect(dt.First(B)).eqls(C)
             expect(dt.First(C)).eqls(A)
 
-            expect(dt.CW(A, B)).eqls(C)
-            expect(dt.CW(A, C)).eqls(B)
-            expect(dt.CW(B, C)).eqls(A)
-            expect(dt.CW(B, A)).eqls(C)
-            expect(dt.CW(C, A)).eqls(B)
-            expect(dt.CW(C, B)).eqls(A)
+            expect(dt.Pred(A, B)).eqls(C)
+            expect(dt.Pred(A, C)).eqls(B)
+            expect(dt.Pred(B, C)).eqls(A)
+            expect(dt.Pred(B, A)).eqls(C)
+            expect(dt.Pred(C, A)).eqls(B)
+            expect(dt.Pred(C, B)).eqls(A)
 
-            expect(dt.CCW(A, B)).eqls(C)
-            expect(dt.CCW(A, C)).eqls(B)
-            expect(dt.CCW(B, A)).eqls(C)
-            expect(dt.CCW(B, C)).eqls(A)
-            expect(dt.CCW(C, A)).eqls(B)
-            expect(dt.CCW(C, B)).eqls(A)
+            expect(dt.Succ(A, B)).eqls(C)
+            expect(dt.Succ(A, C)).eqls(B)
+            expect(dt.Succ(B, A)).eqls(C)
+            expect(dt.Succ(B, C)).eqls(A)
+            expect(dt.Succ(C, A)).eqls(B)
+            expect(dt.Succ(C, B)).eqls(A)
         })
 
         it('can create a dt for 3pts (case 2)', () => {
@@ -118,19 +98,19 @@ describe('Delaunay', () => {
             expect(dt.First(B)).eqls(A)
             expect(dt.First(C)).eqls(B)
 
-            expect(dt.CW(A, B)).eqls(C)
-            expect(dt.CW(A, C)).eqls(B)
-            expect(dt.CW(B, C)).eqls(A)
-            expect(dt.CW(B, A)).eqls(C)
-            expect(dt.CW(C, A)).eqls(B)
-            expect(dt.CW(C, B)).eqls(A)
+            expect(dt.Pred(A, B)).eqls(C)
+            expect(dt.Pred(A, C)).eqls(B)
+            expect(dt.Pred(B, C)).eqls(A)
+            expect(dt.Pred(B, A)).eqls(C)
+            expect(dt.Pred(C, A)).eqls(B)
+            expect(dt.Pred(C, B)).eqls(A)
 
-            expect(dt.CCW(A, B)).eqls(C)
-            expect(dt.CCW(A, C)).eqls(B)
-            expect(dt.CCW(B, A)).eqls(C)
-            expect(dt.CCW(B, C)).eqls(A)
-            expect(dt.CCW(C, A)).eqls(B)
-            expect(dt.CCW(C, B)).eqls(A)
+            expect(dt.Succ(A, B)).eqls(C)
+            expect(dt.Succ(A, C)).eqls(B)
+            expect(dt.Succ(B, A)).eqls(C)
+            expect(dt.Succ(B, C)).eqls(A)
+            expect(dt.Succ(C, A)).eqls(B)
+            expect(dt.Succ(C, B)).eqls(A)
         })
 
         it('can create a dt for 3pts (case 3)', () => {
@@ -154,19 +134,19 @@ describe('Delaunay', () => {
             expect(dt.First(B)).eqls(A)
             expect(dt.First(C)).eqls(B)
 
-            expect(dt.CW(A, B)).eqls(C)
-            expect(dt.CW(A, C)).eqls(B)
-            expect(dt.CW(B, C)).eqls(A)
-            expect(dt.CW(B, A)).eqls(C)
-            expect(dt.CW(C, A)).eqls(B)
-            expect(dt.CW(C, B)).eqls(A)
+            expect(dt.Pred(A, B)).eqls(C)
+            expect(dt.Pred(A, C)).eqls(B)
+            expect(dt.Pred(B, C)).eqls(A)
+            expect(dt.Pred(B, A)).eqls(C)
+            expect(dt.Pred(C, A)).eqls(B)
+            expect(dt.Pred(C, B)).eqls(A)
 
-            expect(dt.CCW(A, B)).eqls(C)
-            expect(dt.CCW(A, C)).eqls(B)
-            expect(dt.CCW(B, A)).eqls(C)
-            expect(dt.CCW(B, C)).eqls(A)
-            expect(dt.CCW(C, A)).eqls(B)
-            expect(dt.CCW(C, B)).eqls(A)
+            expect(dt.Succ(A, B)).eqls(C)
+            expect(dt.Succ(A, C)).eqls(B)
+            expect(dt.Succ(B, A)).eqls(C)
+            expect(dt.Succ(B, C)).eqls(A)
+            expect(dt.Succ(C, A)).eqls(B)
+            expect(dt.Succ(C, B)).eqls(A)
         })
     })
 
@@ -372,13 +352,62 @@ describe('Delaunay', () => {
         })
     })
 
-    describe.only('Insert', () => {
+    describe('Remove', () => {
+        it('case 1', () => {
+            // A _ _ | _ _ F
+            // _ _ C | D _ _
+            // _ B _ | _ E _
+            const A = [1, 1]
+            const B = [2, 3]
+            const C = [3, 2]
+            const D = [4, 2]
+            const E = [5, 3]
+            const F = [6, 1]
 
-        describe('2pts:2pts', () => {
-            it('case 1', () => {
-                // A _ | _ D
-                // _ B | C _
-            })
+            const dtL = DT()
+            dtL.InsertPt(A, B, C)
+
+            const dtR = DT()
+            dtR.InsertPt(D, E, F)
+
+            const LT = LowerCommonTangent(dtL, dtR)
+            const dt = MergeTriangulations(dtL, dtR)
+
+            dt.InsertLine(LT)
+            dt.RemoveLine(LT)
+            expect(dt.First(B)).eqls(C)
+            expect(dt.Pred(B, C)).eqls(A)
+            expect(dt.Succ(B, A)).eqls(C)
+
+            expect(dt.First(E)).eqls(F)
+            expect(dt.Pred(E, F)).eqls(D)
+            expect(dt.Succ(E, D)).eqls(F)
+        })
+    })
+
+    describe('Insert', () => {
+        it('2pts:2pts', () => {
+            // A _ D
+            // _ B C
+            const A = [1, 1]
+            const B = [2, 2]
+            const C = [3, 2]
+            const D = [3, 1]
+
+            const dtL = DT()
+            dtL.InsertPt(A, B)
+
+            const dtR = DT()
+            dtR.InsertPt(C, D)
+
+            const LT = LowerCommonTangent(dtL, dtR)
+            expect(LT).eqls([B, C])
+
+            const UT = UpperCommonTangent(dtL, dtR)
+            expect(UT).eqls([A, D])
+
+            const dt = MergeTriangulations(dtL, dtR)
+            dt.InsertLine(LT)
         })
 
         describe('3pts:3pts', () => {
@@ -404,25 +433,115 @@ describe('Delaunay', () => {
 
                 const dt = MergeTriangulations(dtL, dtR)
 
-                Insert(dt, LT)
-                expect(dt.First(B)).eqls(E)
-                expect(dt.CCW(B, E)).eqls(C)
-                expect(dt.CW(B, C)).eqls(E)
+                dt.InsertLine(LT)
+                expect(dt.First(B)).eqls(C)
+                expect(dt.Succ(B, E)).eqls(C)
+                expect(dt.Pred(B, C)).eqls(E)
 
                 expect(dt.First(E)).eqls(F)
-                expect(dt.CW(E, F)).eqls(B)
-                expect(dt.CCW(E, F)).eqls(D)
-                expect(dt.CW(E, B)).eqls(D)
-                expect(dt.CCW(E, B)).eqls(F)
+                expect(dt.Pred(E, F)).eqls(B)
+                expect(dt.Succ(E, F)).eqls(D)
+                expect(dt.Pred(E, B)).eqls(D)
+                expect(dt.Succ(E, B)).eqls(F)
 
-                Insert(dt, UT)
+                dt.InsertLine(UT)
                 expect(dt.First(A)).eqls(B)
-                expect(dt.CW(A, B)).eqls(F)
-                expect(dt.CCW(A, F)).eqls(B)
+                expect(dt.Pred(A, B)).eqls(F)
+                expect(dt.Succ(A, F)).eqls(B)
 
-                expect(dt.First(F)).eqls(A)
-                expect(dt.CW(F, A)).eqls(E)
-                expect(dt.CCW(F, E)).eqls(A)
+                expect(dt.First(F)).eqls(D)
+                expect(dt.Pred(F, A)).eqls(E)
+                expect(dt.Succ(F, E)).eqls(A)
+            })
+        })
+    })
+
+    describe('Merge', () => {
+        describe('4pts', () => {
+            it('case 1', () => {
+                // A _ D
+                // _ B C
+                const A = [1, 1]
+                const B = [2, 2]
+                const C = [3, 2]
+                const D = [3, 1]
+
+                const dt = DT()
+                dt.InsertPt(A, B, C, D)
+                expect(dt.model.adj[A].ToArray()).eqls([B, D])
+                expect(dt.model.adj[B].ToArray()).eqls([C, D, A])
+                expect(dt.model.adj[C].ToArray()).eqls([D, B])
+                expect(dt.model.adj[D].ToArray()).eqls([A, B, C])
+            })
+        })
+
+        describe('5pts', () => {
+            it('case 1', () => {
+                // A _ D _ E
+                // _ _ C _ _
+                // B _ _ _ _
+                const A = [1, 1]
+                const B = [1, 3]
+                const C = [3, 2]
+                const D = [3, 1]
+                const E = [5, 1]
+
+                const dt = DT()
+                dt.InsertPt(A, B, C, D, E)
+
+                expect(dt.model.adj[A].ToArray()).eqls([B, C, D])
+                expect(dt.model.adj[B].ToArray()).eqls([C, A])
+                expect(dt.model.adj[C].ToArray()).eqls([E, D, A, B])
+                expect(dt.model.adj[D].ToArray()).eqls([A, C, E])
+                expect(dt.model.adj[E].ToArray()).eqls([D, C])
+            })
+
+            it('case 2', () => {
+                // _ _ C _
+                // A _ _ D
+                // _ _ _ _
+                // B _ _ E
+                const A = [1, 2]
+                const B = [1, 4]
+                const C = [3, 1]
+                const D = [4, 2]
+                const E = [4, 4]
+
+                const dt = DT()
+                dt.InsertPt(A, B, C, D, E)
+            })
+
+            it.only('case 3', () => {
+                // _ _ _ _ _ D _ _
+                // _ _ _ _ _ _ _ _
+                // _ _ _ _ _ _ _ _
+                // E _ _ _ _ _ _ _
+                // _ _ _ A _ _ _ _
+                // _ _ _ _ _ _ _ B
+                // _ _ _ _ _ C _ _
+                const A = [8, 11]
+                const B = [16, 12]
+                const C = [12, 13]
+                const D = [13, 1]
+                const E = [1, 10]
+
+                const dt = DT()
+                dt.InsertPt(A, B, C, D, E)
+                expect(dt.model.adj[A].ToArray()).eqls([E, C, D])
+                console.log(dt.model.adj[B].ToArray())
+                expect(dt.model.adj[B].ToArray()).eqls([D, A, C])
+            })
+        })
+
+        describe('6pts', () => {
+
+            it('', () => {
+                const A = [351, 259]
+                const B = [363, 143]
+                const C = [387, 213]
+                const D = [414, 187]
+                const E = [420, 224]
+                const F = [393, 279]
             })
         })
     })

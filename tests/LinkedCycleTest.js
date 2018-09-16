@@ -3,189 +3,228 @@ import LinkedCycle from '../src/LinkedCycle'
 
 describe('LinkedCycle', () => {
 
-    it('is initialized sensibly', () => {
+    it('defaults', () => {
         const list = LinkedCycle()
 
         expect(list.Length()).equals(0)
         expect(list.First()).equals(null)
     })
 
-    it('can append items to the end', () => {
+    it('Append', () => {
         const list = LinkedCycle()
 
+        //
         // ↪ A ->
-        list.Append("A")
+        list.Append("A", 1)
+
         expect(list.Length()).equals(1)
-        expect(list.First().item).equals("A")
-
-        expect(list.First().next).eqls(list.First())
-        expect(list.First().prev).eqls(list.First())
-
-        // ↪ A -> B ->
-        list.Append("B")
-        expect(list.Length()).equals(2)
-
-        let A = list.First()
-        let B = A.next
-        expect(A.item).equals("A")
-        expect(A.prev).eqls(B)
-        expect(A.next).eqls(B)
-
-        expect(B.item).equals("B")
-        expect(B.prev).eqls(A)
-        expect(B.next).eqls(A)
-
-        // ↪ A -> B -> C
-        list.Append("C")
-        expect(list.Length()).equals(3)
-
-        let C = B.next
-        expect(A.item).equals("A")
-        expect(A.prev).eqls(C)
-        expect(A.next).eqls(B)
-
-        expect(B.item).equals("B")
-        expect(B.prev).eqls(A)
-        expect(B.next).eqls(C)
-
-        expect(C.item).equals("C")
-        expect(C.prev).eqls(B)
-        expect(C.next).eqls(A)
-    })
-
-    it('can append items to the end with an offset', () => {
-        const list = LinkedCycle()
-
-        // ↪ A -> B ->
-        list.Append("A", 0)
-        list.Append("B", 0)
-
-        // ↪ A -> C -> B ->
-        list.Append("C", 1)
-        expect(list.Length()).equals(3)
 
         const A = list.First()
-        const B = A.prev
-        const C = A.next
-        expect(A.item).equals("A")
-        expect(C.item).equals("C")
-        expect(B.item).equals("B")
+        expect(A.key).equals("A")
+        expect(A.val).equals(1)
 
-        expect(B.prev).eqls(C)
-        expect(B.next).eqls(A)
+        expect(A.next).eqls(A)
+        expect(A.prev).eqls(A)
 
-        expect(A.prev).eqls(B)
-        expect(A.next).eqls(C)
-    })
+        //
+        // ↪ A -> B ->
+        list.Append("B", 2)
 
-    it('can prepend items to the start', () => {
-        const list = LinkedCycle()
-
-        // ↪ A ->
-        list.Prepend("A")
-        expect(list.Length()).equals(1)
-        expect(list.First().item).equals("A")
-
-        expect(list.First().next).eqls(list.First())
-        expect(list.First().prev).eqls(list.First())
-
-        // ↪ B -> A ->
-        list.Prepend("B")
         expect(list.Length()).equals(2)
 
-        let B = list.First()
-        let A = B.next
-        expect(B.item).equals("B")
+        expect(list.First()).equals(A)
+
+        const B = A.next
+        expect(B.key).equals("B")
+        expect(B.val).equals(2)
+
+        expect(A.prev).eqls(B)
+
         expect(B.prev).eqls(A)
         expect(B.next).eqls(A)
 
-        expect(A.item).equals("A")
-        expect(A.prev).eqls(B)
-        expect(A.next).eqls(B)
+        //
+        // ↪ A -> B -> C
+        list.Append("C", 3)
 
-        // ↪ C -> B -> A ->
-        list.Prepend("C")
+        expect(list.Length()).equals(3)
+        expect(list.First()).equals(A)
+
+        const C = A.next.next
+        expect(C.key).equals("C")
+        expect(C.val).equals(3)
+
+        expect(A.next).eqls(B)
+        expect(A.prev).eqls(C)
+
+        expect(B.next).eqls(C)
+        expect(B.prev).eqls(A)
+
+        expect(C.next).eqls(A)
+        expect(C.prev).eqls(B)
+    })
+
+    it('InsertBefore', () => {
+        const list = LinkedCycle()
+
+        // ↪ A ->
+        list.Append("A", 1)
+
+        // ↪ A -> B ->
+        list.InsertBefore(list.Get("A"), "B", 2)
+        expect(list.Length()).equals(2)
+
+        const A = list.First()
+        const B = A.next
+
+        expect(A.key).equals("A")
+        expect(A.val).equals(1)
+        expect(A.next).equals(B)
+        expect(A.prev).equals(B)
+
+        expect(B.key).equals("B")
+        expect(B.val).equals(2)
+        expect(B.next).equals(A)
+        expect(B.prev).equals(A)
+
+        // ↪ A -> C -> B ->
+        list.InsertBefore(list.Get("B"), "C", 3)
         expect(list.Length()).equals(3)
 
-        let C = list.First()
-        expect(A.item).equals("A")
-        expect(A.next).eqls(C)
-        expect(A.prev).eqls(B)
+        const C = A.next
 
-        expect(B.item).equals("B")
-        expect(B.next).eqls(A)
-        expect(B.prev).eqls(C)
+        expect(A.key).equals("A")
+        expect(A.val).equals(1)
+        expect(A.next).equals(C)
+        expect(A.prev).equals(B)
 
-        expect(C.item).equals("C")
-        expect(C.next).eqls(B)
-        expect(C.prev).eqls(A)
+        expect(B.key).equals("B")
+        expect(B.val).equals(2)
+        expect(B.next).equals(A)
+        expect(B.prev).equals(C)
 
-        // ↪ D -> C -> B -> A ->
-        list.Prepend("D")
-        expect(list.Length()).equals(4)
-
-        let D = list.First()
-        expect(A.item).equals("A")
-        expect(A.next).eqls(D)
-        expect(A.prev).eqls(B)
-
-        expect(B.item).equals("B")
-        expect(B.prev).eqls(C)
-        expect(B.next).eqls(A)
-
-        expect(C.item).equals("C")
-        expect(C.prev).eqls(D)
-        expect(C.next).eqls(B)
-
-
-        expect(D.item).equals("D")
-        expect(D.prev).eqls(A)
-        expect(D.next).eqls(C)
+        expect(C.key).equals("C")
+        expect(C.val).equals(3)
+        expect(C.next).equals(B)
+        expect(C.prev).equals(A)
     })
 
-    it('can prepend items to the start with an offset', () => {
+    // it.skip('can cycle nodes forward', () => {
+    //     const list = LinkedCycle()
+    //
+    //     // empty case
+    //     list.CycleFwd()
+    //     expect(list.First()).equals(null)
+    //
+    //     // single case
+    //     // ↪ A ->
+    //     list.Append("A", 1)
+    //     // ↪ A ->
+    //     list.CycleFwd()
+    //
+    //     const A = list.First()
+    //     expect(A.key).eqls("A")
+    //     expect(A.val).eqls(1)
+    //
+    //     //
+    //     // ↪ A -> B ->
+    //     // becomes: ↪ B -> A ->
+    //     list.Append("B", 2)
+    //     list.CycleFwd()
+    //
+    //     const B = list.First()
+    //     expect(B.key).eqls("B")
+    //     expect(B.val).eqls(2)
+    //
+    //     expect(B.next).eqls(A)
+    //     expect(B.prev).eqls(A)
+    //
+    //     expect(A.next).eqls(B)
+    //     expect(A.prev).eqls(B)
+    //
+    //     //
+    //     // ↪ B -> A -> C->
+    //     // becomes: ↪ C -> B -> A
+    //     list.Append("C", 3)
+    //     list.CycleFwd()
+    //
+    //     const C = list.First()
+    //     expect(C.key).eqls("C")
+    //     expect(C.val).eqls(3)
+    //
+    //     expect(B.next).eqls(A)
+    //     expect(B.prev).eqls(C)
+    //
+    //     expect(A.next).eqls(C)
+    //     expect(A.prev).eqls(B)
+    //
+    //     expect(C.next).eqls(B)
+    //     expect(C.prev).eqls(A)
+    // })
+
+    it('Get', () => {
+        // ↪ A -> B -> C ->
         const list = LinkedCycle()
+        list.Append("A", 1)
+        list.Append("B", 2)
+        list.Append("C", 3)
 
-        // ↪ C -> B ->
-        list.Append("C", 0)
-        list.Append("B", 0)
+        const A = list.First()
+        const B = A.next
+        const C = B.next
 
-        // ↪ D -> E -> C -> B ->
-        list.Prepend("D", 0)
-        list.Prepend("E", 1)
-
-        const D = list.First()
-        const E = D.next
-        const C = E.next
-        const B = C.next
-        expect(D.item).equals("D")
-        expect(E.item).equals("E")
-        expect(C.item).equals("C")
-        expect(B.item).equals("B")
-
-        expect(D.prev).eqls(B)
-        expect(D.next).eqls(E)
-
-        expect(E.prev).eqls(D)
-        expect(E.next).eqls(C)
-
-        expect(C.prev).eqls(E)
-        expect(C.next).eqls(B)
-
-        expect(B.prev).eqls(C)
-        expect(B.next).eqls(D)
+        expect(typeof list.Get("X")).equals('undefined')
+        expect(list.Get("A")).eqls(A)
+        expect(list.Get("B")).eqls(B)
+        expect(list.Get("C")).eqls(C)
     })
 
-    it('supports lookup', () => {
-        // ↪ C -> B -> A ->
+    it('Remove', () => {
+        // ↪ A -> B -> C ->
         const list = LinkedCycle()
-        list.Append("B")
         list.Append("A")
-        list.Prepend("C")
+        list.Append("B")
+        list.Append("C")
 
-        expect(list.Get("X")).equals(null)
+        const A = list.First()
+        const B = A.next
+        const C = B.next
 
-        expect(list.Get("B").item).equals("B")
-        expect(list.Get("B")).eqls(list.First().next)
+        //
+        // ↪ B -> C ->
+        list.Remove("A")
+
+        expect(typeof list.Get("A")).eqls('undefined')
+        expect(list.Length()).equals(2)
+        expect(A.next).eqls(null)
+        expect(A.prev).eqls(null)
+
+        expect(list.First()).eqls(B)
+
+        expect(B.next).eqls(C)
+        expect(B.prev).eqls(C)
+
+        expect(C.next).eqls(B)
+        expect(C.prev).eqls(B)
+
+        // ↪ B ->
+        list.Remove("C")
+        expect(typeof list.Get("C")).eqls('undefined')
+        expect(list.Length()).equals(1)
+        expect(C.next).eqls(null)
+        expect(C.prev).eqls(null)
+
+        expect(list.First()).equals(B)
+
+        expect(B.next).eqls(B)
+        expect(B.prev).eqls(B)
+
+        list.Remove("B")
+        expect(typeof list.Get("B")).eqls('undefined')
+        expect(B.next).eqls(null)
+        expect(B.prev).eqls(null)
+        expect(list.Length()).equals(0)
+        expect(list.First()).equals(null)
+        expect(list.model.nodes).eqls({})
     })
 })

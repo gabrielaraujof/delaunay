@@ -2,57 +2,76 @@ function LinkedCycle() {
     const model = {
         length: 0,
         first: null,
-        items: {},
+        nodes: {},
     }
 
     function Length() {
         return model.length
     }
 
-    function First() {
-        return model.first ? model.first : null
+    function Get(item) {
+        return model.nodes[item]
     }
 
-    function Append(item, offset = 0) {
-        if (model.first === null) {
-            const node = { item }
-            node.prev = node
-            node.next = node
-            model.first = node
+    function First() {
+        return model.first
+    }
 
-            model.items[item] = node
-        } else {
-            offset = ((offset%model.length)+model.length)%model.length
+    function SetFirst(node) {
+        model.first = node
+    }
 
-            let after = model.first
-            let before = model.first.prev
+    function InsertBefore(next, key, val) {
+        const prev = next.prev
+        const node = { key, val, next, prev }
 
-            for (let i = 0; i < offset; i++) {
-                after = after.prev
-                before = before.prev
-            }
-            const X = { item }
-            X.next = after
-            X.prev = before
+        model.nodes[key] = node
+        model.length += 1
 
-            before.next = X
-            after.prev = X
-            model.items[item] = X
+        prev.next = node
+        next.prev = node
+    }
+
+    function Append(key, val) {
+        if (model.first !== null) {
+            return InsertBefore(model.first, key, val)
         }
 
+        const node = { key, val }
+        node.prev = node
+        node.next = node
+
+        model.first = node
+
+        model.nodes[key] = node
         model.length += 1
     }
 
-    function Prepend(item, offset = 0) {
-        Append(item, -offset)
-        if (offset === 0) {
-            model.first = model.first.prev
-        }
-    }
+    function Remove(item) {
+        const node = Get(item)
+        if (typeof node === 'undefined') return
 
-    function Get(item) {
-        if (typeof model.items[item] === 'undefined') return null
-        return model.items[item]
+        model.length--
+        delete(model.nodes[item])
+
+        if (model.length === 0) {
+            model.first = null
+            node.next = null
+            node.prev = null
+            return
+        }
+
+        const before = node.prev
+        const after = node.next
+        node.next = null
+        node.prev = null
+
+        before.next = after
+        after.prev = before
+
+        if (node === model.first) {
+            model.first = after
+        }
     }
 
     function ToArray(forward = true) {
@@ -62,13 +81,13 @@ function LinkedCycle() {
 
         let n = forward ? model.first : model.first.prev
         for (let i = 0; i < model.length; i++) {
-            arr[i] = n.item
+            arr[i] = n.val
             n = forward ? n.next : n.prev
         }
         return arr
     }
 
-    return { model, Length, First, Append, Prepend, Get, ToArray }
+    return { model, Length, Get, First, SetFirst, Append, InsertBefore, Remove, ToArray }
 }
 
 export default LinkedCycle

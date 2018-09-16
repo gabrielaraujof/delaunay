@@ -16,6 +16,7 @@ new Vue({
     },
     methods: {
         addPt({ clientX, clientY }) {
+            console.log([clientX, clientY])
             d.InsertPt([clientX, clientY])
         },
     },
