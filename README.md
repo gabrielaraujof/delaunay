@@ -2,4 +2,4 @@
 
 Dabbling with divide-and-conquery Delaunay Triangulation algorithm.
 
-View demo by (clicking here)[https://desicochrane.github.io/delaunay/].
+View demo [here](https://desicochrane.github.io/delaunay/) and click around to add points!
