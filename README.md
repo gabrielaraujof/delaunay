@@ -1,13 +1,13 @@
-# delaunay
+# Delaunay
 
 Dabbling with divide-and-conquer Delaunay Triangulation algorithm.
 
-View demo [here](https://desicochrane.github.io/delaunay/) and click around to add points!
+[View demo here](https://desicochrane.github.io/delaunay/) and click around to add points!
 
 
-## The Algorithm
+# The Algorithm
 
-### Geometry
+## Geometry
 
 #### PseudoAngle
 
@@ -18,9 +18,10 @@ View demo [here](https://desicochrane.github.io/delaunay/) and click around to a
 #### Convex Hull
 
 
-### Data Structures
+## Data Structures
 
 #### Cyclic Linked List
 
 #### Vertex Cycle
 pseudo angle, invariants, etc
+
