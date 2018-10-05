@@ -528,8 +528,9 @@ describe('Delaunay', () => {
                 const dt = DT()
                 dt.InsertPt(A, B, C, D, E)
                 expect(dt.model.adj[A].ToArray()).eqls([E, C, D])
-                console.log(dt.model.adj[B].ToArray())
-                expect(dt.model.adj[B].ToArray()).eqls([D, A, C])
+                expect(dt.model.adj[B].ToArray()).eqls([D, C])
+                expect(dt.model.adj[C].ToArray()).eqls([B, D, A, E])
+                expect(dt.model.adj[D].ToArray()).eqls([E, A, C, B])
             })
         })
 

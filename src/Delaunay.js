@@ -23,14 +23,14 @@ function newDT(pts, adj, edges) {
         model.adj[X].Insert(Y)
         model.adj[Y].Insert(X)
 
-        pushEdge(model, [X,Y])
+        pushEdge(model, [X, Y])
     }
 
     function RemoveLine([X, Y]) {
         model.adj[X].Remove(Y)
         model.adj[Y].Remove(X)
 
-        popEdge(model, [X,Y])
+        popEdge(model, [X, Y])
     }
 
     function InsertPt() {
@@ -195,72 +195,72 @@ function Triangulate(pts) {
 }
 
 export function Merge(dtL, dtR) {
-    let BT = LowerCommonTangent(dtL, dtR)
-    let UT = UpperCommonTangent(dtL, dtR)
+    let [L, R] = LowerCommonTangent(dtL, dtR)
+    // let UT = UpperCommonTangent(dtL, dtR)
 
     const dt = MergeTriangulations(dtL, dtR)
 
     let first = true
-    while (!linesEq(BT, UT)) {
-        let L = BT[0]
-        let R = BT[1]
-        dt.InsertLine(BT)
-
+    while (true) {
+        // 1. insert lower-tangent
+        dt.InsertLine([L, R])
         if (first) {
-            dt.model.adj[BT[0]].SetFirst(BT[1])
+            dt.model.adj[L].SetFirst(R)
             first = false
         }
 
-        let A = false
-        let B = false
+        // 2. get the candidate point from right side
+        const R1 = (function rightCandidate(dt, L, R) {
+            let R1 = dt.Pred(R, L)
 
-        let R1 = dt.Pred(R, L)
-        if (rightOf(R1, [R, L])) {
+            if (!rightOf(R1, [R, L])) {
+                return false
+            }
+
             let R2 = dt.Pred(R, R1)
-            while (circumscribed(R1, L, R, R2)) {
-                let newR2 = dt.Pred(R, R1)
-                let newR1 = R2
-                dt.RemoveLine([R1, R])
 
-                R1 = newR1
-                R2 = newR2
+            if (!circumscribed(R1, L, R, R2)) {
+                return R1
             }
-        } else {
-            A = true
-        }
 
-        let L1 = dt.Succ(L, R)
-        if (rightOf(L1, [R, L])) {
+            dt.RemoveLine([R, R1])
+
+            return rightCandidate(dt, L, R)
+        })(dt, L, R)
+
+        // 3. get the candidate point from left side
+        const L1 = (function leftCandidate(dt, L, R) {
+            let L1 = dt.Succ(L, R)
+
+            if (rightOf(L1, [L, R])) {
+                return false
+            }
+
             let L2 = dt.Succ(L, L1)
-            while (circumscribed(L, R, L1, L2)) {
-                let newL2 = dt.Succ(L, L2)
-                let newL1 = L2
-                dt.RemoveLine([L, L1])
 
-                L1 = newL1
-                L2 = newL2
+            if (!circumscribed(L1, L, R, L2)) {
+                return L1
             }
-        } else {
-            B = true
-        }
 
-        if (A) {
-            L = L1
-        } else if (B) {
-            R = R1
-        } else if (circumscribed(L, R, R1, L1)) {
-            L = L1
-        } else {
-            R = R1
-        }
+            dt.RemoveLine([L, L1])
 
-        BT = [L, R]
+            return leftCandidate(dt, L, R)
+        })(dt, L, R)
+
+        // 4. No more candidates? done.
+        if (!R1 && !L1) {
+            dt.model.adj[R].SetFirst(L)
+            return dt
+        } else if (!L1) {
+            R = R1
+        } else if (!R1) {
+            L = L1
+        } else if (circumscribed(L1, L, R, R1)) {
+            R = R1
+        } else {
+            L = L1
+        }
     }
-
-    dt.InsertLine(UT)
-    dt.model.adj[UT[1]].SetFirst(UT[0])
-
-    return dt
 }
 
 export function MergeTriangulations(L, R) {
