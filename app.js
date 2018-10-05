@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import Delaunay2, { UniqueEdges } from './src/Delaunay2'
+import Delaunay, { UniqueEdges } from './src/Delaunay'
 
 new Vue({
     el: '#APP',
@@ -12,7 +12,7 @@ new Vue({
             this.ptSet[pt] = true
             this.pts.push(pt)
 
-            const adj = Delaunay2(this.pts)
+            const adj = Delaunay(this.pts)
 
             this.lines = UniqueEdges(adj)
         },

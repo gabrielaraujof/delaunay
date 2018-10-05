@@ -94,7 +94,7 @@
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ \"./node_modules/vue/dist/vue.js\");\n/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(vue__WEBPACK_IMPORTED_MODULE_0__);\n/* harmony import */ var _src_Delaunay2__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./src/Delaunay2 */ \"./src/Delaunay2.js\");\n\n\n\nnew vue__WEBPACK_IMPORTED_MODULE_0___default.a({\n    el: '#APP',\n    data: { ptSet: {}, pts: [], lines: [] },\n    methods: {\n        addPt({ clientX, clientY }) {\n            const pt = [clientX, clientY]\n            if (this.ptSet[pt]) return\n\n            this.ptSet[pt] = true\n            this.pts.push(pt)\n\n            const adj = Object(_src_Delaunay2__WEBPACK_IMPORTED_MODULE_1__[\"default\"])(this.pts)\n\n            this.lines = Object(_src_Delaunay2__WEBPACK_IMPORTED_MODULE_1__[\"UniqueEdges\"])(adj)\n        },\n    },\n})\n\n\n//# sourceURL=webpack:///./app.js?");
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ \"./node_modules/vue/dist/vue.js\");\n/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(vue__WEBPACK_IMPORTED_MODULE_0__);\n/* harmony import */ var _src_Delaunay__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./src/Delaunay */ \"./src/Delaunay.js\");\n\n\n\nnew vue__WEBPACK_IMPORTED_MODULE_0___default.a({\n    el: '#APP',\n    data: { ptSet: {}, pts: [], lines: [] },\n    methods: {\n        addPt({ clientX, clientY }) {\n            const pt = [clientX, clientY]\n            if (this.ptSet[pt]) return\n\n            this.ptSet[pt] = true\n            this.pts.push(pt)\n\n            const adj = Object(_src_Delaunay__WEBPACK_IMPORTED_MODULE_1__[\"default\"])(this.pts)\n\n            this.lines = Object(_src_Delaunay__WEBPACK_IMPORTED_MODULE_1__[\"UniqueEdges\"])(adj)\n        },\n    },\n})\n\n\n//# sourceURL=webpack:///./app.js?");
 
 /***/ }),
 
@@ -153,14 +153,99 @@ eval("var g;\r\n\r\n// This works in non-strict mode\r\ng = (function() {\r\n\tr
 
 /***/ }),
 
-/***/ "./src/Delaunay2.js":
-/*!**************************!*\
-  !*** ./src/Delaunay2.js ***!
-  \**************************/
+/***/ "./src/Delaunay.js":
+/*!*************************!*\
+  !*** ./src/Delaunay.js ***!
+  \*************************/
 /*! exports provided: default, UniqueEdges */
-/***/ (function(module, exports) {
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
-eval("throw new Error(\"Module build failed: Error: ENOENT: no such file or directory, open '/Users/desicochrane/Code/delaunay/src/Delaunay2.js'\\n    at Error (native)\");\n\n//# sourceURL=webpack:///./src/Delaunay2.js?");
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"UniqueEdges\", function() { return UniqueEdges; });\n/* harmony import */ var _Triangulate__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Triangulate */ \"./src/Triangulate.js\");\n/* harmony import */ var _LowerCommonTangent__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./LowerCommonTangent */ \"./src/LowerCommonTangent.js\");\n/* harmony import */ var _Merge__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Merge */ \"./src/Merge.js\");\n/* harmony import */ var _PointSort__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./PointSort */ \"./src/PointSort.js\");\n\n\n\n\n\n/* harmony default export */ __webpack_exports__[\"default\"] = (function(pts) {\n    const adj = {}\n\n    delaunay(pts.sort(_PointSort__WEBPACK_IMPORTED_MODULE_3__[\"default\"]), adj, 0, pts.length - 1)\n\n    return adj\n});\n\nfunction delaunay(pts, adj, l, r) {\n    const size = r - l\n\n    switch (size) {\n        case 0:\n            return\n        case 1:\n            return Object(_Triangulate__WEBPACK_IMPORTED_MODULE_0__[\"Triangulate2\"])(adj, pts[l], pts[r])\n        case 2:\n            return Object(_Triangulate__WEBPACK_IMPORTED_MODULE_0__[\"Triangulate3\"])(adj, pts[l], pts[l + 1], pts[r])\n        default:\n            const m = l + ((r - l) >>> 1)\n            const m2 = m + 1\n\n            delaunay(pts, adj, l, m)\n            delaunay(pts, adj, m2, r)\n\n            const [L, R] = Object(_LowerCommonTangent__WEBPACK_IMPORTED_MODULE_1__[\"default\"])(adj, pts[m], pts[m2])\n            Object(_Merge__WEBPACK_IMPORTED_MODULE_2__[\"default\"])(adj, L, R)\n    }\n}\n\nfunction UniqueEdges(adj) {\n    const edges = {}\n\n    Object.keys(adj).forEach(pt => {\n        const a = adj[pt].Center()\n\n        adj[pt].ToArray().forEach(b => {\n            if (Object(_PointSort__WEBPACK_IMPORTED_MODULE_3__[\"default\"])(a, b) === -1) {\n                edges[[a[0], a[1], b[0], b[1]]] = [a, b]\n            } else {\n                edges[[b[0], b[1], a[0], a[1]]] = [b, a]\n            }\n        })\n    })\n\n    return Object.keys(edges).map(key => edges[key])\n}\n\n\n//# sourceURL=webpack:///./src/Delaunay.js?");
+
+/***/ }),
+
+/***/ "./src/Geometry.js":
+/*!*************************!*\
+  !*** ./src/Geometry.js ***!
+  \*************************/
+/*! exports provided: pseudoAngle, ptSub, ptsEq, linesEq, rightOf, circumscribed */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"pseudoAngle\", function() { return pseudoAngle; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"ptSub\", function() { return ptSub; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"ptsEq\", function() { return ptsEq; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"linesEq\", function() { return linesEq; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"rightOf\", function() { return rightOf; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"circumscribed\", function() { return circumscribed; });\nfunction pseudoAngle([dx, dy]) {\n    const p = dx / (Math.abs(dx) + Math.abs(dy))\n    return dy > 0 ? 3 + p : 1 - p\n}\n\nfunction ptSub(pt, sub) {\n    return [\n        pt[0] - sub[0],\n        pt[1] - sub[1],\n    ]\n}\n\nfunction ptsEq(ptA, ptB) {\n    return ptA[0] === ptB[0] && ptA[1] === ptB[1]\n}\n\nfunction linesEq(A, B) {\n    return ptsEq(A[0], B[0]) && ptsEq(A[1], B[1])\n}\n\nfunction rightOf(pt, line) {\n    const [x, y] = line\n    const a = pt[0] - x[0]\n    const b = y[0] - x[0]\n    const c = pt[1] - x[1]\n    const d = y[1] - x[1]\n\n    return 0 > (a * d) - (b * c)\n}\n\nfunction circumscribed(A, B, C, D) {\n    const [Ax, Ay] = A\n    const [Bx, By] = B\n    const [Cx, Cy] = C\n    const [Dx, Dy] = D\n\n    const AxDx = Ax - Dx\n    const AyDy = Ay - Dy\n\n    const BxDx = Bx - Dx\n    const ByDy = By - Dy\n\n    const CxDx = Cx - Dx\n    const CyDy = Cy - Dy\n\n    const ADSq = (AxDx * AxDx) + (AyDy * AyDy)\n    const BDSq = (BxDx * BxDx) + (ByDy * ByDy)\n    const CDSq = (CxDx * CxDx) + (CyDy * CyDy)\n\n    // AxDx, AyDy, ADSq\n    // BxDx, ByDy, BDSq\n    // CxDx, CyDy, CDSq\n    return (AxDx * (ByDy * CDSq - CyDy * BDSq)\n        - AyDy * (BxDx * CDSq - BDSq * CxDx)\n        + ADSq * (BxDx * CyDy - CxDx * ByDy)) < 0\n}\n\n\n//# sourceURL=webpack:///./src/Geometry.js?");
+
+/***/ }),
+
+/***/ "./src/LinkedCycle.js":
+/*!****************************!*\
+  !*** ./src/LinkedCycle.js ***!
+  \****************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\nfunction LinkedCycle() {\n    const model = {\n        length: 0,\n        first: null,\n        nodes: {},\n    }\n\n    function Length() {\n        return model.length\n    }\n\n    function Get(item) {\n        return model.nodes[item]\n    }\n\n    function First() {\n        return model.first\n    }\n\n    function SetFirst(node) {\n        model.first = node\n    }\n\n    function InsertBefore(next, key, val) {\n        const prev = next.prev\n        const node = { key, val, next, prev }\n\n        model.nodes[key] = node\n        model.length += 1\n\n        prev.next = node\n        next.prev = node\n    }\n\n    function Append(key, val) {\n        if (model.first !== null) {\n            return InsertBefore(model.first, key, val)\n        }\n\n        const node = { key, val }\n        node.prev = node\n        node.next = node\n\n        model.first = node\n\n        model.nodes[key] = node\n        model.length += 1\n    }\n\n    function Remove(item) {\n        const node = Get(item)\n        if (typeof node === 'undefined') return\n\n        model.length--\n        delete(model.nodes[item])\n\n        if (model.length === 0) {\n            model.first = null\n            node.next = null\n            node.prev = null\n            return\n        }\n\n        const before = node.prev\n        const after = node.next\n        node.next = null\n        node.prev = null\n\n        before.next = after\n        after.prev = before\n\n        if (node === model.first) {\n            model.first = after\n        }\n    }\n\n    function ToArray(forward = true) {\n        const arr = Array(model.length)\n\n        if (model.length === 0) arr\n\n        let n = forward ? model.first : model.first.prev\n        for (let i = 0; i < model.length; i++) {\n            arr[i] = n.val\n            n = forward ? n.next : n.prev\n        }\n        return arr\n    }\n\n    return { model, Length, Get, First, SetFirst, Append, InsertBefore, Remove, ToArray }\n}\n\n/* harmony default export */ __webpack_exports__[\"default\"] = (LinkedCycle);\n\n\n//# sourceURL=webpack:///./src/LinkedCycle.js?");
+
+/***/ }),
+
+/***/ "./src/LowerCommonTangent.js":
+/*!***********************************!*\
+  !*** ./src/LowerCommonTangent.js ***!
+  \***********************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var _Geometry__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Geometry */ \"./src/Geometry.js\");\n\n\n/* harmony default export */ __webpack_exports__[\"default\"] = (function(adj, X, Y) {\n    let $Y = adj[Y].First()\n    let X$ = adj[X].CW(adj[X].First())\n\n    while (true) {\n        if (Object(_Geometry__WEBPACK_IMPORTED_MODULE_0__[\"rightOf\"])($Y, [X, Y])) {\n            let $$Y = adj[$Y].First()\n            Y = $Y\n            $Y = $$Y\n        } else if (Object(_Geometry__WEBPACK_IMPORTED_MODULE_0__[\"rightOf\"])(X$, [X, Y])) {\n            let X$$ = adj[X$].CW(X)\n            X = X$\n            X$ = X$$\n        } else {\n            return [X, Y]\n        }\n    }\n});\n\n\n//# sourceURL=webpack:///./src/LowerCommonTangent.js?");
+
+/***/ }),
+
+/***/ "./src/Merge.js":
+/*!**********************!*\
+  !*** ./src/Merge.js ***!
+  \**********************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"default\", function() { return Merge; });\n/* harmony import */ var _Geometry__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Geometry */ \"./src/Geometry.js\");\n\n\nfunction Merge(adj, L, R) {\n    let first = true\n\n    while (true) {\n        // 1. insert lower-tangent\n        adj[L].Insert(R)\n        adj[R].Insert(L)\n        if (first) {\n            adj[L].SetFirst(R)\n            first = false\n        }\n\n        // 2. get the candidate point from right side\n        let rightCandidate = false\n        while (true) {\n            const R$ = adj[R].CW(L)\n\n            if (!Object(_Geometry__WEBPACK_IMPORTED_MODULE_0__[\"rightOf\"])(R$, [R, L])) {\n                rightCandidate = false\n                break\n            }\n\n            const R$$ = adj[R].CW(R$)\n\n            if (!Object(_Geometry__WEBPACK_IMPORTED_MODULE_0__[\"circumscribed\"])(R$, L, R, R$$)) {\n                rightCandidate = R$\n                break\n            }\n\n            adj[R].Remove(R$)\n            adj[R$].Remove(R)\n        }\n\n        // 3. get the candidate point from left side\n        let leftCandidate = false\n        while (true) {\n            const $L = adj[L].CCW(R)\n            if (Object(_Geometry__WEBPACK_IMPORTED_MODULE_0__[\"rightOf\"])($L, [L, R])) {\n                leftCandidate = false\n                break\n            }\n\n            const $$L = adj[L].CCW($L)\n\n            if (!Object(_Geometry__WEBPACK_IMPORTED_MODULE_0__[\"circumscribed\"])($L, L, R, $$L)) {\n                leftCandidate = $L\n                break\n            }\n\n            adj[L].Remove($L)\n            adj[$L].Remove(L)\n        }\n\n        // 4. No more candidates? done.\n        if (!rightCandidate && !leftCandidate) {\n            adj[R].SetFirst(L)\n            return adj\n        }\n\n        if (!leftCandidate) {\n            R = rightCandidate\n        } else if (!rightCandidate) {\n            L = leftCandidate\n        } else if (Object(_Geometry__WEBPACK_IMPORTED_MODULE_0__[\"circumscribed\"])(leftCandidate, L, R, rightCandidate)) {\n            R = rightCandidate\n        } else {\n            L = leftCandidate\n        }\n    }\n}\n\n\n//# sourceURL=webpack:///./src/Merge.js?");
+
+/***/ }),
+
+/***/ "./src/PointSort.js":
+/*!**************************!*\
+  !*** ./src/PointSort.js ***!
+  \**************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony default export */ __webpack_exports__[\"default\"] = (function (A, B) {\n    if (A[0] === B[0]) {\n        if (A[1] === B[1]) return 0\n        return A[1] > B[1] ? -1 : 1\n    }\n\n    return A[0] < B[0] ? -1 : 1\n});\n\n\n//# sourceURL=webpack:///./src/PointSort.js?");
+
+/***/ }),
+
+/***/ "./src/Triangulate.js":
+/*!****************************!*\
+  !*** ./src/Triangulate.js ***!
+  \****************************/
+/*! exports provided: Triangulate2, Triangulate3 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"Triangulate2\", function() { return Triangulate2; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"Triangulate3\", function() { return Triangulate3; });\n/* harmony import */ var _VertexCycle__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./VertexCycle */ \"./src/VertexCycle.js\");\n/* harmony import */ var _Geometry__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Geometry */ \"./src/Geometry.js\");\n\n\n\nfunction Triangulate2(adj, A, B) {\n    const cycleA = Object(_VertexCycle__WEBPACK_IMPORTED_MODULE_0__[\"default\"])(A)\n    cycleA.Insert(B)\n\n    const cycleB = Object(_VertexCycle__WEBPACK_IMPORTED_MODULE_0__[\"default\"])(B)\n    cycleB.Insert(A)\n\n    adj[A] = cycleA\n    adj[B] = cycleB\n}\n\nfunction Triangulate3(adj, A, B, C) {\n    const cycleA = Object(_VertexCycle__WEBPACK_IMPORTED_MODULE_0__[\"default\"])(A)\n    const cycleB = Object(_VertexCycle__WEBPACK_IMPORTED_MODULE_0__[\"default\"])(B)\n    const cycleC = Object(_VertexCycle__WEBPACK_IMPORTED_MODULE_0__[\"default\"])(C)\n\n    if (Object(_Geometry__WEBPACK_IMPORTED_MODULE_1__[\"rightOf\"])(C, [A, B])) {\n        cycleA.Insert(C)\n        cycleA.Insert(B)\n\n        cycleB.Insert(A)\n        cycleB.Insert(C)\n\n        cycleC.Insert(B)\n        cycleC.Insert(A)\n    } else {\n        cycleA.Insert(B)\n        cycleA.Insert(C)\n\n        cycleB.Insert(C)\n        cycleB.Insert(A)\n\n        cycleC.Insert(A)\n        cycleC.Insert(B)\n    }\n\n    adj[A] = cycleA\n    adj[B] = cycleB\n    adj[C] = cycleC\n}\n\n\n//# sourceURL=webpack:///./src/Triangulate.js?");
+
+/***/ }),
+
+/***/ "./src/VertexCycle.js":
+/*!****************************!*\
+  !*** ./src/VertexCycle.js ***!
+  \****************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"default\", function() { return VertexCycle; });\n/* harmony import */ var _LinkedCycle__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./LinkedCycle */ \"./src/LinkedCycle.js\");\n/* harmony import */ var _Geometry__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Geometry */ \"./src/Geometry.js\");\n\n\n\nfunction VertexCycle(center) {\n    const model = {\n        center,\n        cycle: Object(_LinkedCycle__WEBPACK_IMPORTED_MODULE_0__[\"default\"])(),\n        minPt: null,\n    }\n\n    function Center() {\n        return model.center\n    }\n\n    function First() {\n        const first = model.cycle.First()\n\n        return first ? first.val.pt : null\n    }\n\n    function SetFirst(pt) {\n        const node = model.cycle.Get(pt)\n        if (typeof node === 'undefined') throw Error(`pt not found: ${pt}`)\n\n        model.cycle.SetFirst(node)\n    }\n\n    function CW(pt) {\n        const node = model.cycle.Get(pt)\n        return node ? node.prev.val.pt : null\n    }\n\n    function CCW(pt) {\n        const node = model.cycle.Get(pt)\n        return node ? node.next.val.pt : null\n    }\n\n    function Insert(pt) {\n        // prevent duplicates\n        if (typeof model.cycle.Get(pt) !== 'undefined') return\n\n        const p = Object(_Geometry__WEBPACK_IMPORTED_MODULE_1__[\"pseudoAngle\"])(Object(_Geometry__WEBPACK_IMPORTED_MODULE_1__[\"ptSub\"])(pt, model.center))\n\n        if (model.cycle.Length() === 0) {\n            model.cycle.Append(pt, { pt, p })\n            model.minPt = pt\n        } else {\n            // find the min point \"min\" of the cycle\n            const min = model.cycle.Get(model.minPt)\n\n            // for the length of the cycle, check next, if p < next -> insert before\n            let node = min\n            for (let i = 0; i < model.cycle.Length(); i++) {\n                if (p < node.val.p) break\n                node = node.next\n            }\n\n            model.cycle.InsertBefore(node, pt, { pt, p })\n\n            // if p < min, update min\n            if (p < min.val.p) {\n                model.minPt = pt\n            }\n        }\n    }\n\n    function Remove(pt) {\n        const node = model.cycle.Get(pt)\n        if (typeof node === 'undefined') throw Error(`pt not found: ${pt}`)\n\n        // are we removing the min?\n        if (Object(_Geometry__WEBPACK_IMPORTED_MODULE_1__[\"ptsEq\"])(pt, model.minPt)) {\n            model.minPt = model.cycle.Length() === 1 ? null : node.next.val.pt\n        }\n\n        model.cycle.Remove(pt)\n    }\n\n    function ToArray() {\n        return model.cycle.ToArray().map(({ pt }) => pt)\n    }\n\n    return { model, Center, First, CW, CCW, Insert, Remove, SetFirst, ToArray }\n}\n\n\n//# sourceURL=webpack:///./src/VertexCycle.js?");
 
 /***/ })
 
