@@ -2,7 +2,24 @@
 
 [![Coverage Status](https://coveralls.io/repos/github/desicochrane/delaunay/badge.svg?branch=master)](https://coveralls.io/github/desicochrane/delaunay?branch=master)
 
-Dabbling with divide-and-conquer Delaunay Triangulation algorithm.
+Dependency-free implementation of the divide-and-conquer Delaunay Triangulation algorithm.
+
+# Getting started
+1. `npm i @desicochrane/delaunay`
+1. import and triangulate your point set:
+    ```js
+    import Delaunay, {UniqueEdges} from '@desicochrane/delaunay'
+
+    // define your point set
+    const pts = [ [1,1], [1,2], [3,4], [4,5] ]
+ 
+    // compute triangulation graph
+    const graph = Delaunay(pts)
+ 
+   // get unique edges from graph
+   const edges = UniqueEdges(graph)
+   ```
+
 
 # The Algorithm
 This package takes a divide-and-conquer approach in the same flavor as merge-sort, the basic idea goes something like:
