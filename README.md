@@ -21,14 +21,14 @@ function Delaunay(pts) {
     const edges = {}
     
     // pass edges into the recursive procedure
-    delaunay(edges, pts, 0, pts.length)
+    delaunay(edges, pts, 0, pts.length-1)
     
     return edges
 }
 
 function delaunay(edges, pts, min, max) {
     // how many points are we triangulating
-    const size = max - min + 1
+    const size = max-min+1
     
     // zero or 1 point is the trivial delaunay triangulation 
     if (size < 1) return edges
