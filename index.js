@@ -35,27 +35,24 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 function delaunay(pts, adj, l, r) {
     var size = r - l;
 
-    switch (size) {
-        case 0:
-            return;
-        case 1:
-            return (0, _Triangulate.Triangulate2)(adj, pts[l], pts[r]);
-        case 2:
-            return (0, _Triangulate.Triangulate3)(adj, pts[l], pts[l + 1], pts[r]);
-        default:
-            var m = l + (r - l >>> 1);
-            var m2 = m + 1;
+    if (size < 1) return;
 
-            delaunay(pts, adj, l, m);
-            delaunay(pts, adj, m2, r);
+    if (size === 1) return (0, _Triangulate.Triangulate2)(adj, pts[l], pts[r]);
 
-            var _LowerCommonTangent = (0, _LowerCommonTangent4.default)(adj, pts[m], pts[m2]),
-                _LowerCommonTangent2 = _slicedToArray(_LowerCommonTangent, 2),
-                L = _LowerCommonTangent2[0],
-                R = _LowerCommonTangent2[1];
+    if (size === 2) return (0, _Triangulate.Triangulate3)(adj, pts[l], pts[l + 1], pts[r]);
 
-            (0, _Merge2.default)(adj, L, R);
-    }
+    var m = l + (r - l >>> 1);
+    var m2 = m + 1;
+
+    delaunay(pts, adj, l, m);
+    delaunay(pts, adj, m2, r);
+
+    var _LowerCommonTangent = (0, _LowerCommonTangent4.default)(adj, pts[m], pts[m2]),
+        _LowerCommonTangent2 = _slicedToArray(_LowerCommonTangent, 2),
+        L = _LowerCommonTangent2[0],
+        R = _LowerCommonTangent2[1];
+
+    (0, _Merge2.default)(adj, L, R);
 }
 
 function UniqueEdges(adj) {
