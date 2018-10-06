@@ -53,9 +53,10 @@ function delaunay(edges, pts, min, max) {
 What remains then is to specify the subroutines `Triangulate2`, `Triangulate3`, and `Merge`.
 
 #### Triangulate2+3 Subroutines
+```todo```
 
 #### Merge Subroutine
-
+```todo```
 
 ## Geometry Prerequisites
 The implementation depends on the following geometric concepts and properties:
