@@ -3,6 +3,10 @@ import Delaunay, { UniqueEdges } from '../src/Delaunay'
 
 describe('Delaunay', () => {
 
+    it('Triangulates zero points', () => {
+        expect(Delaunay([])).eqls({})
+    })
+
     it('Triangulates n points', () => {
         //   D   F    J
         //   C     G

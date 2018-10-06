@@ -14,23 +14,20 @@ export default function(pts) {
 function delaunay(pts, adj, l, r) {
     const size = r - l
 
-    switch (size) {
-        case 0:
-            return
-        case 1:
-            return Triangulate2(adj, pts[l], pts[r])
-        case 2:
-            return Triangulate3(adj, pts[l], pts[l + 1], pts[r])
-        default:
-            const m = l + ((r - l) >>> 1)
-            const m2 = m + 1
+    if (size < 1) return
 
-            delaunay(pts, adj, l, m)
-            delaunay(pts, adj, m2, r)
+    if (size === 1) return Triangulate2(adj, pts[l], pts[r])
 
-            const [L, R] = LowerCommonTangent(adj, pts[m], pts[m2])
-            Merge(adj, L, R)
-    }
+    if (size === 2) return Triangulate3(adj, pts[l], pts[l + 1], pts[r])
+
+    const m = l + ((r - l) >>> 1)
+    const m2 = m + 1
+
+    delaunay(pts, adj, l, m)
+    delaunay(pts, adj, m2, r)
+
+    const [L, R] = LowerCommonTangent(adj, pts[m], pts[m2])
+    Merge(adj, L, R)
 }
 
 export function UniqueEdges(adj) {

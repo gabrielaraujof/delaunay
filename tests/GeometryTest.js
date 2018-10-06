@@ -1,5 +1,5 @@
 import { expect } from 'chai'
-import { circumscribed, pseudoAngle, ptsEq, ptSub, rightOf } from '../src/Geometry'
+import { circumscribed, pseudoAngle, ptsEq, linesEq, ptSub, rightOf } from '../src/Geometry'
 
 describe('Geometry', () => {
 
@@ -35,9 +35,17 @@ describe('Geometry', () => {
     })
 
     describe('ptsEq', () => {
-        it('can subtract a point from another', () => {
+        it('can detect if points are equal', () => {
             expect(ptsEq([8, 5], [8, 5])).eqls(true)
             expect(ptsEq([8, 5], [8, 4])).eqls(false)
+        })
+    })
+
+
+    describe('linesEq', () => {
+        it('can detect if lines are equal', () => {
+            expect(linesEq([[8, 5], [8, 4]], [[8, 5], [8, 4]])).eqls(true)
+            expect(linesEq([[8, 5], [8, 4]], [[8, 5], [8, 3]])).eqls(false)
         })
     })
 
