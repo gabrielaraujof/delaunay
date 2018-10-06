@@ -20,10 +20,10 @@ describe('PointSort', () => {
         const I = [6, 3]
         const J = [6, 1]
 
-        const pts = [B, C, A, H, E, J, I, F, D, G]
+        const pts = [B, B, C, A, H, E, J, I, F, D, G]
 
         pts.sort(PointSort)
 
-        expect(pts).eqls([A, B, C, D, E, F, G, H, I, J])
+        expect(pts).eqls([A, B, B, C, D, E, F, G, H, I, J])
     })
 })
