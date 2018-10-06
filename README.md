@@ -30,7 +30,7 @@ This package takes a divide-and-conquer approach in the same flavor as merge-sor
 1. Merge the triangulations together
 
 
-A sample code of the main Subroutine would look something like this:
+A sample code of the main routine would look something like this:
 
 ```js
 function Delaunay(pts) {
@@ -57,7 +57,7 @@ function delaunay(edges, pts, min, max) {
     if (size == 3) return Triangulate3(edges, pts[min], pts[min+1], pts[max])
     
     // otherwise we divide into halves:
-    const mid = min + ((max - min) >>> 1)
+    const mid = min+((max-min)>>>1)
     
     delaunay(edges, pts, min, mid)
     delaunay(edges, pts, mid+1, max)
@@ -70,9 +70,10 @@ function delaunay(edges, pts, min, max) {
 What remains then is to specify the subroutines `Triangulate2`, `Triangulate3`, and `Merge`.
 
 #### Triangulate2+3 Subroutines
+```todo```
 
 #### Merge Subroutine
-
+```todo```
 
 ## Geometry Prerequisites
 The implementation depends on the following geometric concepts and properties:
