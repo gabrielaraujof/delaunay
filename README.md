@@ -38,7 +38,7 @@ function Delaunay(pts) {
     const edges = {}
     
     // pass edges into the recursive procedure
-    delaunay(edges, pts, 0, pts.length-1)
+    delaunay(edges, pts.sort(PointSort), 0, pts.length-1)
     
     return edges
 }
@@ -67,7 +67,10 @@ function delaunay(edges, pts, min, max) {
 }
 ```
 
-What remains then is to specify the subroutines `Triangulate2`, `Triangulate3`, and `Merge`.
+What remains then is to specify the subroutines `PointSort`, `Triangulate2`, `Triangulate3`, and `Merge`.
+
+#### PointSort Subroutines
+```todo```
 
 #### Triangulate2+3 Subroutines
 ```todo```
