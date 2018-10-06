@@ -21,7 +21,7 @@ function Delaunay(pts) {
     const edges = {}
     
     // pass edges into the recursive procedure
-    delaunay(edges, pts, 0, pts.length)
+    delaunay(edges, pts, 0, pts.length - 1)
     
     return edges
 }
