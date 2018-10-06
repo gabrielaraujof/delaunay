@@ -13,7 +13,7 @@ This package takes a divide-and-conquer approach in the same flavor as merge-sor
 1. Merge the triangulations together
 
 
-A sample code of the main Routine would look something like this:
+A sample code of the main routine would look something like this:
 
 ```js
 function Delaunay(pts) {
