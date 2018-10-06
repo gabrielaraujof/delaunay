@@ -74,15 +74,15 @@ function LinkedCycle() {
         }
     }
 
-    function ToArray(forward = true) {
+    function ToArray() {
         const arr = Array(model.length)
 
         if (model.length === 0) arr
 
-        let n = forward ? model.first : model.first.prev
+        let n = model.first
         for (let i = 0; i < model.length; i++) {
             arr[i] = n.val
-            n = forward ? n.next : n.prev
+            n = n.next
         }
         return arr
     }

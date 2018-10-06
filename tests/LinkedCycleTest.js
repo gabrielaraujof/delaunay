@@ -109,59 +109,6 @@ describe('LinkedCycle', () => {
         expect(C.prev).equals(A)
     })
 
-    // it.skip('can cycle nodes forward', () => {
-    //     const list = LinkedCycle()
-    //
-    //     // empty case
-    //     list.CycleFwd()
-    //     expect(list.First()).equals(null)
-    //
-    //     // single case
-    //     // ↪ A ->
-    //     list.Append("A", 1)
-    //     // ↪ A ->
-    //     list.CycleFwd()
-    //
-    //     const A = list.First()
-    //     expect(A.key).eqls("A")
-    //     expect(A.val).eqls(1)
-    //
-    //     //
-    //     // ↪ A -> B ->
-    //     // becomes: ↪ B -> A ->
-    //     list.Append("B", 2)
-    //     list.CycleFwd()
-    //
-    //     const B = list.First()
-    //     expect(B.key).eqls("B")
-    //     expect(B.val).eqls(2)
-    //
-    //     expect(B.next).eqls(A)
-    //     expect(B.prev).eqls(A)
-    //
-    //     expect(A.next).eqls(B)
-    //     expect(A.prev).eqls(B)
-    //
-    //     //
-    //     // ↪ B -> A -> C->
-    //     // becomes: ↪ C -> B -> A
-    //     list.Append("C", 3)
-    //     list.CycleFwd()
-    //
-    //     const C = list.First()
-    //     expect(C.key).eqls("C")
-    //     expect(C.val).eqls(3)
-    //
-    //     expect(B.next).eqls(A)
-    //     expect(B.prev).eqls(C)
-    //
-    //     expect(A.next).eqls(C)
-    //     expect(A.prev).eqls(B)
-    //
-    //     expect(C.next).eqls(B)
-    //     expect(C.prev).eqls(A)
-    // })
-
     it('Get', () => {
         // ↪ A -> B -> C ->
         const list = LinkedCycle()
@@ -226,5 +173,7 @@ describe('LinkedCycle', () => {
         expect(list.Length()).equals(0)
         expect(list.First()).equals(null)
         expect(list.model.nodes).eqls({})
+
+        list.Remove("B")
     })
 })
