@@ -67,6 +67,19 @@ describe('VertexCycle', () => {
 
     describe('Remove', () => {
 
+        it('not found', () => {
+            const cycle = VertexCycle([5, 2])
+
+            let err = false
+            try {
+                cycle.Remove([4, 8])
+            } catch(e) {
+                err = true
+            }
+
+            expect(err).equals(true)
+        })
+
         it('case: simple', () => {
             const cycle = VertexCycle([5, 2])
 
@@ -136,6 +149,58 @@ describe('VertexCycle', () => {
             cycle.Remove([3, 0])
             expect(cycle.model.minPt).eqls(null)
             expect(cycle.ToArray()).eqls([])
+        })
+    })
+
+    describe('SetFirst', () => {
+
+        it('can set the first item of the cycle', () => {
+            const cycle = VertexCycle([5, 2])
+
+            cycle.Insert([2, 3])
+            cycle.Insert([4, 8])
+
+            cycle.SetFirst([4, 8])
+
+            expect(cycle.First()).eqls([4, 8])
+        })
+
+        it('throws error if setting first to not found', () => {
+            const cycle = VertexCycle([5, 2])
+
+            let err = false
+            try {
+                cycle.SetFirst([4, 8])
+            } catch(e) {
+                err = true
+            }
+
+            expect(err).equals(true)
+        })
+    })
+
+    describe('CW + CCW', () => {
+
+        it('throws error if not found', () => {
+            const cycle = VertexCycle([5, 2])
+
+            let err = false
+            try {
+                cycle.CW([8, 5])
+            } catch(e) {
+                err = true
+            }
+
+            expect(err).equals(true)
+
+            let err2 = false
+            try {
+                cycle.CCW([8, 5])
+            } catch(e) {
+                err2 = true
+            }
+
+            expect(err2).equals(true)
         })
     })
 })

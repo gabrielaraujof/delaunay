@@ -27,12 +27,16 @@ export default function VertexCycle(center) {
 
     function CW(pt) {
         const node = model.cycle.Get(pt)
-        return node ? node.prev.val.pt : null
+        if (typeof node === 'undefined') throw Error(`pt not found: ${pt}`)
+
+        return node.prev.val.pt
     }
 
     function CCW(pt) {
         const node = model.cycle.Get(pt)
-        return node ? node.next.val.pt : null
+        if (typeof node === 'undefined') throw Error(`pt not found: ${pt}`)
+
+        return node.next.val.pt
     }
 
     function Insert(pt) {
