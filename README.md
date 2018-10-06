@@ -40,7 +40,7 @@ function delaunay(edges, pts, min, max) {
     if (size == 3) return Triangulate3(edges, pts[min], pts[min+1], pts[max])
     
     // otherwise we divide into halves:
-    const mid = min + ((max - min) >>> 1)
+    const mid = min+((max-min)>>>1)
     
     delaunay(edges, pts, min, mid)
     delaunay(edges, pts, mid+1, max)
