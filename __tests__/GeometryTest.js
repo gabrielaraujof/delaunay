@@ -1,4 +1,3 @@
-import { expect } from 'chai'
 import { circumscribed, pseudoAngle, ptsEq, linesEq, ptSub, rightOf } from '../src/Geometry'
 
 describe('Geometry', () => {
@@ -21,8 +20,8 @@ describe('Geometry', () => {
             const K = p([2, 2])
             const L = p([2, 1])
 
-            expect(A).equals(0)
-            expect(([D, A, E, K, L, C, F, B, G, H, I, J]).sort()).eqls([
+            expect(A).toEqual(0)
+            expect(([D, A, E, K, L, C, F, B, G, H, I, J]).sort()).toEqual([
                 A, B, C, D, E, F, G, H, I, J, K, L
             ])
         })
@@ -30,22 +29,22 @@ describe('Geometry', () => {
 
     describe('ptSub', () => {
         it('can subtract a point from another', () => {
-            expect(ptSub([8, 5], [5, 2])).eqls([3, 3])
+            expect(ptSub([8, 5], [5, 2])).toEqual([3, 3])
         })
     })
 
     describe('ptsEq', () => {
         it('can detect if points are equal', () => {
-            expect(ptsEq([8, 5], [8, 5])).eqls(true)
-            expect(ptsEq([8, 5], [8, 4])).eqls(false)
+            expect(ptsEq([8, 5], [8, 5])).toEqual(true)
+            expect(ptsEq([8, 5], [8, 4])).toEqual(false)
         })
     })
 
 
     describe('linesEq', () => {
         it('can detect if lines are equal', () => {
-            expect(linesEq([[8, 5], [8, 4]], [[8, 5], [8, 4]])).eqls(true)
-            expect(linesEq([[8, 5], [8, 4]], [[8, 5], [8, 3]])).eqls(false)
+            expect(linesEq([[8, 5], [8, 4]], [[8, 5], [8, 4]])).toEqual(true)
+            expect(linesEq([[8, 5], [8, 4]], [[8, 5], [8, 3]])).toEqual(false)
         })
     })
 
@@ -55,7 +54,7 @@ describe('Geometry', () => {
             const y = [2, 2]
 
             const pt = [2, 3]
-            expect(rightOf(pt, [x, y])).equals(true)
+            expect(rightOf(pt, [x, y])).toEqual(true)
         })
 
         it('returns false if pt is collinear to line', () => {
@@ -63,7 +62,7 @@ describe('Geometry', () => {
             const y = [2, 2]
 
             const pt = [3, 3]
-            expect(rightOf(pt, [x, y])).equals(false)
+            expect(rightOf(pt, [x, y])).toEqual(false)
         })
 
         it('returns false if pt is "above" line in canvas', () => {
@@ -71,7 +70,7 @@ describe('Geometry', () => {
             const y = [2, 2]
 
             const pt = [2, 1]
-            expect(rightOf(pt, [x, y])).equals(false)
+            expect(rightOf(pt, [x, y])).toEqual(false)
         })
     })
 
@@ -86,7 +85,7 @@ describe('Geometry', () => {
             const C = [3, 3]
             const D = [2, 2]
 
-            expect(circumscribed(A, B, C, D)).equals(true)
+            expect(circumscribed(A, B, C, D)).toEqual(true)
         })
         it('detects if point inside circle case2', () => {
             // A _ _
@@ -97,7 +96,7 @@ describe('Geometry', () => {
             const C = [3, 2]
             const D = [1, 2]
 
-            expect(circumscribed(A, B, C, D)).equals(true)
+            expect(circumscribed(A, B, C, D)).toEqual(true)
         })
 
         it('detects if point outside circle case1', () => {
@@ -109,7 +108,7 @@ describe('Geometry', () => {
             const C = [3, 3]
             const D = [3, 1]
 
-            expect(circumscribed(A, B, C, D)).equals(false)
+            expect(circumscribed(A, B, C, D)).toEqual(false)
         })
 
         it('detects if point outside circle case2', () => {
@@ -121,7 +120,7 @@ describe('Geometry', () => {
             const C = [2, 2]
             const D = [2, 1]
 
-            expect(circumscribed(A, B, C, D)).equals(false)
+            expect(circumscribed(A, B, C, D)).toEqual(false)
         })
     })
 })

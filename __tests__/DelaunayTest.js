@@ -1,10 +1,9 @@
-import { expect } from 'chai'
 import Delaunay, { UniqueEdges } from '../src/Delaunay'
 
 describe('Delaunay', () => {
 
     it('Triangulates zero points', () => {
-        expect(Delaunay([])).eqls({})
+        expect(Delaunay([])).toEqual({})
     })
 
     it('Triangulates n points', () => {
@@ -27,18 +26,18 @@ describe('Delaunay', () => {
         const pts = [B, C, A, H, E, J, I, F, D, G]
 
         const adj = Delaunay(pts)
-        expect(adj[A].ToArray()).eqls([B, C, D])
-        expect(adj[B].ToArray()).eqls([H, E, C, A])
-        expect(adj[C].ToArray()).eqls([A, B, E, F, D])
-        expect(adj[D].ToArray()).eqls([A, C, F])
-        expect(adj[E].ToArray()).eqls([C, B, H, G, F])
-        expect(adj[F].ToArray()).eqls([D, C, E, G, J])
-        expect(adj[G].ToArray()).eqls([F, E, H, I, J])
-        expect(adj[H].ToArray()).eqls([I, G, E, B])
-        expect(adj[I].ToArray()).eqls([J, G, H])
-        expect(adj[J].ToArray()).eqls([F, G, I])
+        expect(adj[A].ToArray()).toEqual([B, C, D])
+        expect(adj[B].ToArray()).toEqual([H, E, C, A])
+        expect(adj[C].ToArray()).toEqual([A, B, E, F, D])
+        expect(adj[D].ToArray()).toEqual([A, C, F])
+        expect(adj[E].ToArray()).toEqual([C, B, H, G, F])
+        expect(adj[F].ToArray()).toEqual([D, C, E, G, J])
+        expect(adj[G].ToArray()).toEqual([F, E, H, I, J])
+        expect(adj[H].ToArray()).toEqual([I, G, E, B])
+        expect(adj[I].ToArray()).toEqual([J, G, H])
+        expect(adj[J].ToArray()).toEqual([F, G, I])
 
         const edges = UniqueEdges(adj)
-        expect(edges.length).equals(20)
+        expect(edges.length).toEqual(20)
     })
 })
