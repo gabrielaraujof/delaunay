@@ -187,3 +187,6 @@ expect(cycle.ToArray()).toEqual([A,B,D,F,E,C])
 To maintain this counter-clockwise sort invariant an addition [pseudo-angle](#pseudoangle) is stored for each point along with a pointer to the item with the lowest pseudo-angle. Then when an item is inserted we can compute its pseudo-angle then traverse from the minimum item until we find a point with a higher pseudo-angle in which case we insert the new item before it (and update the minimum pointer if needed). When removing, we also need to check if the minimum pointer should be updated.
 
 For full example see the source code for [VertexCycle](https://github.com/desicochrane/delaunay/blob/master/src/VertexCycle.js) and its [test cases](https://github.com/desicochrane/delaunay/blob/master/__tests__/VertexCycleTest.js).
+
+### Adjacency List
+```todo```
