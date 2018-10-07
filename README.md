@@ -20,6 +20,13 @@ Dependency-free implementation of the divide-and-conquer Delaunay Triangulation 
    const edges = UniqueEdges(graph)
    ```
 
+# What is a Delaunay Triangulation anyway?
+
+## Triangulation
+```todo```
+
+## Delaunay Triangulations
+```todo```
 
 # The Algorithm
 This package takes a divide-and-conquer approach in the same flavor as merge-sort, the basic idea goes something like:
