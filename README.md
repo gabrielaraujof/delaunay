@@ -8,6 +8,8 @@ Dependency-free implementation of the divide-and-conquer Delaunay Triangulation 
 1. `npm i @desicochrane/delaunay`
 1. import and triangulate your point set:
     ```js
+    // Delaunay.js
+    
     import Delaunay, {UniqueEdges} from '@desicochrane/delaunay'
 
     // define your point set
