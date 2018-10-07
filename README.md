@@ -7,9 +7,7 @@ Dependency-free implementation of the divide-and-conquer Delaunay Triangulation 
 # Getting started
 1. `npm i @desicochrane/delaunay`
 1. import and triangulate your point set:
-    ```js
-    // Delaunay.js
-    
+    ```js    
     import Delaunay, {UniqueEdges} from '@desicochrane/delaunay'
 
     // define your point set
@@ -35,6 +33,8 @@ This package takes a divide-and-conquer approach in the same flavor as merge-sor
 A sample code of the main routine would look something like this:
 
 ```js
+// Delaunay.js
+
 function Delaunay(pts) {
     // the output will be an adjacency list of edges
     const edges = {}
