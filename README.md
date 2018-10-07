@@ -7,7 +7,7 @@ Dependency-free implementation of the divide-and-conquer Delaunay Triangulation 
 # Getting started
 1. `npm i @desicochrane/delaunay`
 1. import and triangulate your point set:
-    ```js
+    ```js    
     import Delaunay, {UniqueEdges} from '@desicochrane/delaunay'
 
     // define your point set
@@ -33,6 +33,8 @@ This package takes a divide-and-conquer approach in the same flavor as merge-sor
 A sample code of the main routine would look something like this:
 
 ```js
+// Delaunay.js
+
 function Delaunay(pts) {
     // the output will be an adjacency list of edges
     const edges = {}
@@ -48,7 +50,7 @@ function delaunay(edges, pts, min, max) {
     const size = max-min+1
     
     // zero or 1 point is the trivial delaunay triangulation 
-    if (size < 1) return edges
+    if (size < 2) return edges
     
     // 2 points can be computed easily
     if (size == 2) return Triangulate2(edges, pts[min], pts[max])
@@ -69,8 +71,39 @@ function delaunay(edges, pts, min, max) {
 
 What remains then is to specify the subroutines `PointSort`, `Triangulate2`, `Triangulate3`, and `Merge`.
 
-#### PointSort Subroutines
-```todo```
+#### PointSort Subroutine
+
+The algorithm assumes that the input points are sorted left-to-right and bottom-to-top, keeping in mind that browsers have the y-axis in the opposite direction (lower position is a higher y-coordinate).
+
+So the following 10 points should be sorted as follows:
+
+```txt
+   D     F   I     |      4     6   9    
+   C       G       |      3       7      
+ A                 =>   1                
+       E       J   |          5       10  
+   B         H     |      2         8    
+```        
+
+The sort function then is as follows.
+
+```js
+// PointSort.js
+
+export default function (A, B) {
+    // if they share same x-coord
+    if (A[0] === B[0]) {
+        // then A comes before B if its y-coord is higher
+        return A[1] > B[1] ? -1 : 1
+    }
+
+    // otherwise A comes before B if its x-coord is lower
+    return A[0] < B[0] ? -1 : 1
+}
+```
+
+Notice we are assuming distinct points, so we don't need to check for ties.
+
 
 #### Triangulate2+3 Subroutines
 ```todo```
