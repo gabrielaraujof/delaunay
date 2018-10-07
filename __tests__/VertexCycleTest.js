@@ -21,7 +21,7 @@ describe('VertexCycle', () => {
         // when the following points are inserted (in arbitrary order)
         const A = [1, 5]
         const B = [4, 7]
-        const C = [3, 1]
+        const C = [4, 1]
         const D = [7, 6]
         const E = [7, 2]
         const F = [9, 3]
