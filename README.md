@@ -5,28 +5,33 @@
 Dependency-free implementation of the divide-and-conquer Delaunay Triangulation algorithm.
 
 # Getting started
-1. `npm i @desicochrane/delaunay`
-1. import and triangulate your point set:
-    ```js    
-    import Delaunay, {UniqueEdges} from '@desicochrane/delaunay'
 
-    // define your point set
-    const pts = [ [1,1], [1,2], [3,4], [4,5] ]
- 
-    // compute triangulation graph
-    const graph = Delaunay(pts)
- 
-   // get unique edges from graph
-   const edges = UniqueEdges(graph)
-   ```
+Install the package
+`npm i @desicochrane/delaunay`
 
-# What is a Delaunay Triangulation anyway?
+Import and triangulate your point set:
 
-## Triangulation
-```todo```
+```js    
+import Delaunay, {UniqueEdges} from '@desicochrane/delaunay'
+// define your point set
+const pts = [ [1,1], [1,2], [3,4], [4,5] ]
 
-## Delaunay Triangulations
-```todo```
+// compute triangulation graph
+const graph = Delaunay(pts)
+
+// get unique edges from graph
+const edges = UniqueEdges(graph)
+```
+
+Here the output `graph` is an adjacency list, where the lists are doubly-linked and circular. To get the unique edges from this graph you can use the `UniqueEdges` helper:
+
+```js    
+import { UniqueEdges } from '@desicochrane/delaunay'
+
+const edges = UniqueEdges(graph)
+```
+
+Where each edge is an array of two points.
 
 # The Algorithm
 This package takes a divide-and-conquer approach in the same flavor as merge-sort, the basic idea goes something like:
@@ -129,6 +134,14 @@ The implementation depends on the following geometric concepts and properties:
 
 #### Convex Hull
 ```todo```
+
+# What is a Delaunay Triangulation?
+
+## Triangulation
+```// todo Intuitions, counterexamples (crossing edges or incomplete), formal definition, examples, non-uniqueness and flipping edges```
+
+## Delaunay Triangulation
+```// todo compare min angles in two triangulations, prove intuitively existence and uniqueness via increasing via flipping argument, consequences (i.e. no circumscribed points, convex hull is a subset)```
 
 
 ## Data Structures
