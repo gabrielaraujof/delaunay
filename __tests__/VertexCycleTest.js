@@ -11,6 +11,32 @@ describe('VertexCycle', () => {
         expect(cycle.ToArray()).toEqual([])
     })
 
+    it.only('Insert (readme example)', () => {
+        // Given a center point P
+        const P = [5, 4]
+
+        // and a new vertex cycle centered at P
+        const cycle = VertexCycle(P)
+
+        // when the following points are inserted (in arbitrary order)
+        const A = [1, 5]
+        const B = [4, 7]
+        const C = [3, 1]
+        const D = [7, 6]
+        const E = [7, 2]
+        const F = [9, 3]
+
+        cycle.Insert(A)
+        cycle.Insert(C)
+        cycle.Insert(E)
+        cycle.Insert(D)
+        cycle.Insert(F)
+        cycle.Insert(B)
+
+        // then they should be in counter-clockwise order from the first insert
+        expect(cycle.ToArray()).toEqual([A, B, D, F, E, C])
+    })
+
     it('Insert', () => {
         const cycle = VertexCycle([5, 2])
 
