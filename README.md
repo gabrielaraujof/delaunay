@@ -12,15 +12,12 @@ Install the package
 Import and triangulate your point set:
 
 ```js    
-import Delaunay, {UniqueEdges} from '@desicochrane/delaunay'
+import Delaunay from '@desicochrane/delaunay'
 // define your point set
 const pts = [ [1,1], [1,2], [3,4], [4,5] ]
 
 // compute triangulation graph
 const graph = Delaunay(pts)
-
-// get unique edges from graph
-const edges = UniqueEdges(graph)
 ```
 
 Here the output `graph` is an adjacency list, where the lists are doubly-linked and circular. To get the unique edges from this graph you can use the `UniqueEdges` helper:
