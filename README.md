@@ -102,9 +102,6 @@ export default function (A, B) {
 }
 ```
 
-Notice we are assuming distinct points, so we don't need to check for ties.
-
-
 #### Triangulate2+3 Subroutines
 ```todo```
 
