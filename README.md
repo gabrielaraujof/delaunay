@@ -69,7 +69,7 @@ function delaunay(edges, pts, min, max) {
 
 What remains then is to specify the subroutines `PointSort`, `Triangulate2`, `Triangulate3`, and `Merge`.
 
-#### PointSort Subroutines
+#### PointSort Subroutine
 
 The algorithm assumes that the input points are sorted left-to-right and bottom-to-top, keeping in mind that browsers have the y-axis in the opposite direction (lower position is a higher y-coordinate).
 
