@@ -80,7 +80,7 @@ function delaunay(edges, pts, min, max) {
 
 What remains then is to specify the subroutines `PointSort`, `Triangulate2`, `Triangulate3`, and `Merge`.
 
-#### PointSort Subroutine
+### PointSort Subroutine
 
 The algorithm assumes that the input points are sorted left-to-right and bottom-to-top, keeping in mind that browsers have the y-axis in the opposite direction (lower position is a higher y-coordinate).
 
@@ -111,25 +111,25 @@ export default function (A, B) {
 }
 ```
 
-#### Triangulate2+3 Subroutines
+### Triangulate2+3 Subroutines
 ```todo```
 
-#### Merge Subroutine
+### Merge Subroutine
 ```todo```
 
-## Geometry Prerequisites
+# Geometry Prerequisites
 The implementation depends on the following geometric concepts and properties:
 
-#### PseudoAngle
+### PseudoAngle
 ```todo```
 
-#### RightOf
+### RightOf
 ```todo```
 
-#### Circumscribed
+### Circumscribed
 ```todo```
 
-#### Convex Hull
+### Convex Hull
 ```todo```
 
 # What is a Delaunay Triangulation?
@@ -141,13 +141,13 @@ The implementation depends on the following geometric concepts and properties:
 ```// todo compare min angles in two triangulations, prove intuitively existence and uniqueness via increasing via flipping argument, consequences (i.e. no circumscribed points, convex hull is a subset)```
 
 
-## Data Structures
+# Data Structures
 The efficiency depends heavily on being able to traverse the triangulation efficiently, to do so we construct a `Vertex Cycle` data structure which is effectively a specialised `Cyclic Linked List`.
 
-#### Cyclic Linked List
+### Cyclic Linked List
 ```todo```
 
-#### Vertex Cycle
+### Vertex Cycle
 The `VertexCycle` data structure is essentially a [cyclic and doubly linked list](#cyclic-linked-list), but augmented to maintain an additional sort invariant.
 
 The vertex cycle takes a center point and then maintains the invariant that its the points that are inserted are sorted in in counter-clockwise direction relative to the center point. For example, consider the image below:
