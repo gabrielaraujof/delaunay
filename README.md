@@ -148,9 +148,9 @@ The efficiency depends heavily on being able to traverse the triangulation effic
 ```todo```
 
 #### Vertex Cycle
-The `VertexCycle` data structure is essentially a [cyclic and doubly linked list](#cyclic-linked-list), but augmented to maintain additional invariants to help traverse our triangulation throughout computation.
+The `VertexCycle` data structure is essentially a [cyclic and doubly linked list](#cyclic-linked-list), but augmented to maintain an additional sort invariant.
 
-For each point in our point set we will maintain a vertex cycle, where each item in the vertex cycle corresponding to a point which forms a delaunay edge. The vertex cycle maintains the invariant that each item in its list is sorted in counter-clockwise direction. For example, consider the image below:
+The vertex cycle takes a center point and then maintains the invariant that its the points that are inserted are sorted in in counter-clockwise direction relative to the center point. For example, consider the image below:
 
 <img src="assets/vertex-cycle-1.svg">
 
@@ -185,7 +185,5 @@ expect(cycle.ToArray()).toEqual([A,B,D,F,E,C])
 ```
 
 To maintain this counter-clockwise sort invariant an addition [pseudo-angle](#pseudoangle) is stored for each point along with a pointer to the item with the lowest pseudo-angle. Then when an item is inserted we can compute its pseudo-angle then traverse from the minimum item until we find a point with a higher pseudo-angle in which case we insert the new item before it (and update the minimum pointer if needed). When removing, we also need to check if the minimum pointer should be updated.
-
-An additional invariant we keep track of is the special case when the center point is on the [Convex Hull](#convex-hull), in which case the first item in the list will point to the next item on the convex hull when traversing in the counter clockwise direction.
 
 For full example see the source code for [VertexCycle](https://github.com/desicochrane/delaunay/blob/master/src/VertexCycle.js) and its [test cases](https://github.com/desicochrane/delaunay/blob/master/__tests__/VertexCycleTest.js).
