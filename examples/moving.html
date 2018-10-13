@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Delaunay</title>
+  <style>
+    html, body, #APP {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+  </style>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.17/vue.min.js"></script>
+  <script src="/delaunay.js"></script>
+</head>
+<body>
+
+<div id="APP">
+  <svg version="1.1"
+       height="100%" width="100%"
+       baseProfile="full"
+       preserveAspectRatio="none"
+       style="display: block; position: relative"
+       xmlns="http://www.w3.org/2000/svg"
+  >
+
+    <line v-for="l in lines"
+          :x1="l[0][0]"
+          :y1="l[0][1]"
+          :x2="l[1][0]"
+          :y2="l[1][1]"
+          stroke="#734DC5"
+          stroke-width="2"
+          stroke-linecap="round"/>
+    <circle v-for="pt in pts" :cx="pt[0]" :cy="pt[1]" r="5" fill="#212121"/>
+  </svg>
+</div>
+
+<script>
+    new Vue({
+        el: '#APP',
+        data: { ptVecs: [], pts: [], lines: [] },
+        mounted() {
+            for (let i = 0; i < 50; i++) {
+                const x = Math.random() * this.$el.clientWidth
+                const y = Math.random() * this.$el.clientHeight
+                const dx = (Math.random() * 4) - 2
+                const dy = (Math.random() * 4) - 2
+                this.ptVecs.push({ x, y, dx, dy })
+            }
+
+            const draw = () => {
+
+                const A = [0, 0]
+                const B = [this.$el.clientWidth, 0]
+                const C = [0, this.$el.clientHeight]
+                const X = [this.$el.clientWidth, this.$el.clientHeight]
+
+                this.pts = [A, B, C, X]
+                const added = { [A]: true, [B]: true, [C]: true, [X]: true }
+
+                this.ptVecs.forEach(pt => {
+                    if (added[[pt.x, pt.y]]) return
+                    added[[pt.x, pt.y]] = true
+
+                    pt.x += pt.dx
+                    if (pt.x < 0 || pt.x > this.$el.clientWidth) pt.dx *= -1
+                    pt.y += pt.dy
+                    if (pt.y < 0 || pt.y > this.$el.clientHeight) pt.dy *= -1
+
+                    this.pts.push([pt.x, pt.y])
+                })
+
+                const adj = D.Delaunay(this.pts)
+                this.lines = D.UniqueEdges(adj)
+
+                requestAnimationFrame(draw)
+            }
+
+            draw()
+        },
+    })
+</script>
+</body>
+</html>
