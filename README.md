@@ -45,40 +45,40 @@ A sample code of the main routine would look something like this:
 // Delaunay.js
 
 function Delaunay(pts) {
-    // the output will be an adjacency list of edges
-    const edges = {}
+    // the output will be an adjacency list graph representation
+    const graph = {}
     
-    // pass edges into the recursive procedure
-    delaunay(edges, pts.sort(PointSort), 0, pts.length-1)
+    // pass the graph into the recursive procedure
+    delaunay(graph, pts.sort(PointSort), 0, pts.length-1)
     
-    return edges
+    return graph
 }
 
-function delaunay(edges, pts, min, max) {
+function delaunay(graph, pts, min, max) {
     // how many points are we triangulating
     const size = max-min+1
     
     // zero or 1 point is the trivial delaunay triangulation 
-    if (size < 2) return edges
+    if (size < 2) return graph
     
     // 2 points can be computed easily
-    if (size == 2) return Triangulate2(edges, pts[min], pts[max])
+    if (size == 2) return Triangulate2(graph, pts[min], pts[max])
     
     // 3 points can be computed easily
-    if (size == 3) return Triangulate3(edges, pts[min], pts[min+1], pts[max])
+    if (size == 3) return Triangulate3(graph, pts[min], pts[min+1], pts[max])
     
     // otherwise we divide into halves:
     const mid = min+((max-min)>>>1)
     
-    delaunay(edges, pts, min, mid)
-    delaunay(edges, pts, mid+1, max)
+    delaunay(graph, pts, min, mid)
+    delaunay(graph, pts, mid+1, max)
     
     // and then merge the results
-    return Merge(adj, mid, mid+1)
+    return Merge(graph, mid, mid+1)
 }
 ```
 
-What remains then is to specify the subroutines `PointSort`, `Triangulate2`, `Triangulate3`, and `Merge`.
+What remains then is to specify the subroutines [`PointSort`](#pointsort-subroutine), `Triangulate2`, `Triangulate3`, and `Merge`.
 
 ### PointSort Subroutine
 
