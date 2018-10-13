@@ -3,7 +3,9 @@ import LowerCommonTangent from './LowerCommonTangent'
 import Merge from './Merge'
 import PointSort from './PointSort'
 
-export default function(pts) {
+export default Delaunay
+
+export function Delaunay(pts) {
     // the output will be an adjacency list of edges
     const adj = {}
 
@@ -12,6 +14,7 @@ export default function(pts) {
 
     return adj
 }
+
 
 function delaunay(pts, adj, l, r) {
     // how many points are we triangulating

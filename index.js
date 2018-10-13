@@ -6,14 +6,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
-exports.default = function (pts) {
-    var adj = {};
-
-    delaunay(pts.sort(_PointSort2.default), adj, 0, pts.length - 1);
-
-    return adj;
-};
-
+exports.Delaunay = Delaunay;
 exports.UniqueEdges = UniqueEdges;
 
 var _Triangulate = require('./Triangulate');
@@ -32,20 +25,38 @@ var _PointSort2 = _interopRequireDefault(_PointSort);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+exports.default = Delaunay;
+function Delaunay(pts) {
+    // the output will be an adjacency list of edges
+    var adj = {};
+
+    // pass edges into the recursive procedure
+    delaunay(pts.sort(_PointSort2.default), adj, 0, pts.length - 1);
+
+    return adj;
+}
+
 function delaunay(pts, adj, l, r) {
+    // how many points are we triangulating
     var size = r - l;
 
+    // zero or 1 point is the trivial delaunay triangulation
     if (size < 1) return;
 
+    // 2 points can be computed easily
     if (size === 1) return (0, _Triangulate.Triangulate2)(adj, pts[l], pts[r]);
 
+    // 3 points can be computed easily
     if (size === 2) return (0, _Triangulate.Triangulate3)(adj, pts[l], pts[l + 1], pts[r]);
 
+    // otherwise we divide into halves:
     var m = l + (r - l >>> 1);
     var m2 = m + 1;
 
     delaunay(pts, adj, l, m);
     delaunay(pts, adj, m2, r);
+
+    // and then merge the results
 
     var _LowerCommonTangent = (0, _LowerCommonTangent4.default)(adj, pts[m], pts[m2]),
         _LowerCommonTangent2 = _slicedToArray(_LowerCommonTangent, 2),

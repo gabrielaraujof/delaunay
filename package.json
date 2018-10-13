@@ -1,11 +1,12 @@
 {
   "name": "@desicochrane/delaunay",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "main": "index.js",
   "scripts": {
     "test": "jest",
+    "coverage": "jest --coverage --coverageReporters=text-lcov | coveralls",
     "prepublish": "babel -o index.js src/Delaunay.js",
-    "coverage": "jest --coverage --coverageReporters=text-lcov | coveralls"
+    "bundle": "rollup src/Delaunay.js --file delaunay.js --format umd --name \"D\""
   },
   "babel": {
     "presets": [
@@ -18,6 +19,7 @@
     "babel-jest": "^23.6.0",
     "babel-preset-env": "^1.7.0",
     "coveralls": "^3.0.2",
-    "jest": "^23.6.0"
+    "jest": "^23.6.0",
+    "rollup": "^0.66.6"
   }
 }
