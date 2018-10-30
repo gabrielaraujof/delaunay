@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Delaunay</title>
+  <style>
+    html, body, #APP {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+  </style>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.17/vue.min.js"></script>
+  <script src="delaunay.js"></script>
+</head>
+<body>
+
+<div id="APP">
+  <div v-if="pts.length === 0" style="position: absolute; top: 50%; text-align: center; width: 100%;">click anywhere to add points</div>
+  <svg version="1.1"
+       height="100%" width="100%"
+       baseProfile="full"
+       preserveAspectRatio="none"
+       style="display: block; position: relative"
+       xmlns="http://www.w3.org/2000/svg"
+       @click="evt => addPt(evt)"
+  >
+
+    <line v-for="l in lines"
+          :x1="l[0][0]"
+          :y1="l[0][1]"
+          :x2="l[1][0]"
+          :y2="l[1][1]"
+          stroke="#734DC5"
+          stroke-width="2"
+          stroke-linecap="round"/>
+    <circle v-for="pt in pts" :cx="pt[0]" :cy="pt[1]" r="4" fill="#212121"/>
+  </svg>
+</div>
+
+<script>
+    new Vue({
+        el: '#APP',
+        data: { ptSet: {}, pts: [], lines: [] },
+        methods: {
+            addPt({ clientX, clientY }) {
+                const pt = [clientX, clientY]
+                if (this.ptSet[pt]) return
+
+                this.ptSet[pt] = true
+                this.pts.push(pt)
+
+                const adj = D.Delaunay(this.pts)
+
+                this.lines = D.UniqueEdges(adj)
+            },
+        },
+    })
+</script>
+</body>
+</html>

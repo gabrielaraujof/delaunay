@@ -1,4 +1,3 @@
-import { expect } from 'chai'
 import PointSort from '../src/PointSort'
 
 describe('PointSort', () => {
@@ -24,6 +23,6 @@ describe('PointSort', () => {
 
         pts.sort(PointSort)
 
-        expect(pts).eqls([A, B, B, C, D, E, F, G, H, I, J])
+        expect(pts).toEqual([A, B, B, C, D, E, F, G, H, I, J])
     })
 })

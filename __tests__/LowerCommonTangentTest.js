@@ -1,4 +1,3 @@
-import { expect } from 'chai'
 import { Triangulate2, Triangulate3 } from '../src/Triangulate'
 import LowerCommonTangent from '../src/LowerCommonTangent'
 
@@ -25,10 +24,10 @@ describe('LowerCommonTangent', () => {
 
         Triangulate3(adj, A, B, C)
         Triangulate2(adj, D, E)
-        expect(LowerCommonTangent(adj, C, D)).eqls([B, E])
+        expect(LowerCommonTangent(adj, C, D)).toEqual([B, E])
 
         Triangulate3(adj, F, G, H)
         Triangulate2(adj, I, J)
-        expect(LowerCommonTangent(adj, H, I)).eqls([H, I])
+        expect(LowerCommonTangent(adj, H, I)).toEqual([H, I])
     })
 })
