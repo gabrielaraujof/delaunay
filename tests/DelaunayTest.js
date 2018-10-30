@@ -1,5 +1,5 @@
 import { expect } from 'chai'
-import Delaunay, { UniqueEdges } from '../src/Delaunay'
+import Delaunay, { UniqueEdges, UniqueTriangles } from '../src/Delaunay'
 
 describe('Delaunay', () => {
 
@@ -40,5 +40,8 @@ describe('Delaunay', () => {
 
         const edges = UniqueEdges(adj)
         expect(edges.length).equals(20)
+
+        const triangles = UniqueTriangles(edges)
+        expect(triangles.length).equals(11)
     })
 })

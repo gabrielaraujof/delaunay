@@ -3,7 +3,7 @@ import LowerCommonTangent from './LowerCommonTangent'
 import Merge from './Merge'
 import PointSort from './PointSort'
 
-export default function(pts) {
+export default function (pts) {
     const adj = {}
 
     delaunay(pts.sort(PointSort), adj, 0, pts.length - 1)
@@ -46,4 +46,28 @@ export function UniqueEdges(adj) {
     })
 
     return Object.keys(edges).map(key => edges[key])
+}
+
+export function UniqueTriangles(edges) {
+
+    function triangle(a, b, c) {
+        return [[a, b, c]]
+    }
+
+    function UniquePoints([edgeA, edgeB, edgeC]) {
+        return Object.values([...edgeA, ...edgeB, ...edgeC]
+            .reduce((set, pt) => Object.assign(set, { [pt]: pt }), {}))
+    }
+
+    const triangles = edges.reduce((ta, a, i) => {
+        return ta.concat(edges.slice(i + 1).reduce((tb, b, j) => {
+            return tb.concat(edges.slice(i + 2 + j).reduce((tc, c) => {
+                return tc.concat(triangle(a, b, c))
+            }, []))
+        }, []))
+    }, [])
+
+    return triangles
+        .map(UniquePoints)
+        .filter(pts => pts.length === 3)
 }
